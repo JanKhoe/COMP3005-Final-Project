@@ -4,39 +4,32 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Add your authentication logic here
-    // For now, just redirect to students page
+    // TODO: Add user to persistent storage if the username did not exist already
     router.push('/home');
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-      <Link 
-        href="/register"
-        className="absolute top-8 right-8 px-6 py-2 bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-black dark:text-white font-medium rounded-lg transition-colors"
-      >
-        Register
-      </Link>
       
       <div className="w-full max-w-md p-8 bg-white dark:bg-zinc-900 rounded-lg shadow-lg">
         <h1 className="text-3xl font-semibold text-center mb-8 text-black dark:text-white">
-          Login
+          Register
         </h1>
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block text-sm font-medium mb-2 text-black dark:text-white">
-              Email
+              Username
             </label>
             <input
               type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUserName(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
               required
             />
@@ -46,7 +39,7 @@ export default function LoginPage() {
               Password
             </label>
             <input
-              type="password"
+              type="text"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
@@ -57,7 +50,7 @@ export default function LoginPage() {
             type="submit"
             className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
           >
-            Sign In
+            Create New User
           </button>
         </form>
       </div>
