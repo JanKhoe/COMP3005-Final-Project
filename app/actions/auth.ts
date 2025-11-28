@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { UserType } from '@/generated/prisma'
+import { MetricType } from '@/generated/prisma'
 
 export async function loginUser(username: string, password: string) {
   try {
@@ -25,6 +26,26 @@ export async function loginUser(username: string, password: string) {
     return { success: false, error: 'Login failed' }
   }
 }
+
+export async function addMetric(metricType: MetricType, value: number, memberId: number|undefined) {
+  try {
+    if(!memberId) return { success: false };
+    const metric = await prisma.healthMetric.create({
+      data: {
+        metricType,
+        value,
+        memberId
+      }
+    });
+
+    return { success: true, metric };
+
+  } catch (error) {
+    console.error('Metric creation error:', error);
+    return { success: false, error: 'Failed to add metric' };
+  }
+}
+
 
 export async function registerUser(username: string, password: string) {
     console.log(username, password);

@@ -49,6 +49,11 @@ export default function LoginPage() {
           Login
         </h1>
         <form onSubmit={handleLogin} className="space-y-6">
+          {error && (
+            <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+              {error}
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium mb-2 text-black dark:text-white">
               Email
