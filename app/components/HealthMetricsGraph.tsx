@@ -40,7 +40,10 @@ export default function HealthMetricsGraph({ metricType }: HealthMetricsGraphPro
   const fetchHealthMetrics = async () => {
     try {
       setLoading(true);
-      const metrics = await getMetricsForMember(user?.id);
+      const metrics = (await getMetricsForMember(user?.id))?.filter(
+        
+        (metric) => metric.metricType === metricType
+      );
       
        if(!metrics || metrics.length == 0){
         throw new Error("EMPTY");

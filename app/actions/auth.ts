@@ -14,6 +14,9 @@ export async function getMetricsForMember(id: number | undefined): Promise<Healt
       where: {
         memberId: id,
       },
+      orderBy: {
+        measuredAt: 'asc'
+      }
     });
   } catch (error) {
     console.error("Error fetching metrics:", error);
@@ -32,7 +35,6 @@ export async function addMetric(metricType: MetricType, value: number, memberId:
         measuredAt: measuredAt ?? undefined
       }
     });
-    console.log('success!');
     return { success: true, metric };
 
   } catch (error) {

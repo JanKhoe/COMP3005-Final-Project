@@ -27,6 +27,12 @@ export default function Home() {
           <div className="w-full max-w-6xl mx-auto min-w-[800px]">
             <HealthMetricsGraph metricType={MetricType.heartbeat}  ></HealthMetricsGraph>
           </div>
+          <div className="w-full max-w-6xl mx-auto min-w-[800px]">
+            <HealthMetricsGraph metricType={MetricType.steps}  ></HealthMetricsGraph>
+          </div>
+          <div className="w-full max-w-6xl mx-auto min-w-[800px]">
+            <HealthMetricsGraph metricType={MetricType.calories}  ></HealthMetricsGraph>
+          </div>
         </div>
       </main>
     </div>
