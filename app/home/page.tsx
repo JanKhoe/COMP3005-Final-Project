@@ -1,10 +1,10 @@
 'use client'
 import { useState } from 'react';
-import AddStudentButton from "../components/AddStudentButton";
-import StudentTable from "../components/StudentTable";
+import { useUser } from '@/app/contexts/UserContext'
 
 export default function Home() {
   const [refresh, setRefresh] = useState(false);
+  const { user, setUser, logout } = useUser()
 
   const triggerRefresh = () => {
     setRefresh(!refresh);
@@ -17,12 +17,12 @@ export default function Home() {
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
         <div className="flex flex-col gap-6 text-center sm:items-start sm:text-left">
           <h1 className="max-w-s text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Student Database
+            Hello, {user?.name}
           </h1>
-          <AddStudentButton onRefresh={triggerRefresh}/>
+          
 
           <div className="mt-8 w-full">
-            <StudentTable refresh={refresh} onRefresh={triggerRefresh} />
+            
           </div>
         </div>
       </main>

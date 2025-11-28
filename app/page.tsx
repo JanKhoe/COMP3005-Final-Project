@@ -1,19 +1,39 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { loginUser } from '@/app/actions/auth'
+import { useUser } from '@/app/contexts/UserContext'
 import Link from 'next/link';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+  const { setUser } = useUser()
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Add your authentication logic here
-    // For now, just redirect to students page
-    router.push('/home');
-  };
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
+
+    const result = await loginUser(username, password)
+
+    if (result.success && result.user) {
+      setUser({
+        id: result.user.id,
+        name: result.user.name,
+        typeOfUser: result.user.typeOfUser,
+        memberId: result.user.member?.id
+      })
+      router.push('/home')
+    } else {
+      setError(result.error || 'Login failed')
+    }
+    
+    setIsLoading(false)
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
@@ -35,8 +55,8 @@ export default function LoginPage() {
             </label>
             <input
               type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUserName(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
               required
             />

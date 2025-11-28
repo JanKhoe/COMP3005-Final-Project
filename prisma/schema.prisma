@@ -15,17 +15,40 @@ enum UserType {
   system_admin
 }
 
+enum MetricType {
+  heartbeat
+  calories
+  steps
+}
+
 model User {
   id         Int      @id @default(autoincrement())
-  name       String
+  name       String   @unique
   password   String
-  typeOfUser UserType
+  typeOfUser UserType @default(member)
+
 
   member Member?
+  
+  @@index([name])
 }
 
 model Member {
-  id     Int  @id @default(autoincrement())
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id])
+  id            Int            @id @default(autoincrement())
+  userId        Int            @unique
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  healthMetrics HealthMetric[]
+}
+
+model HealthMetric {
+  id          Int        @id @default(autoincrement())
+  metricType  MetricType
+  value       Float      // The actual measurement value
+  measuredAt  DateTime   @default(now())
+  memberId    Int
+  member      Member     @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  
+  @@index([memberId])
+  @@index([measuredAt])
 }
