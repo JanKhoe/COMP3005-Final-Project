@@ -5,15 +5,14 @@ import { UserType } from '@/generated/prisma'
 import { MetricType } from '@/generated/prisma'
 import type { HealthMetric } from '@/generated/prisma'
 
+
+// METRIC SERVER ACTIONS
 export async function getMetricsForMember(id: number | undefined): Promise<HealthMetric[]> {
   try {
     console.log(id);
     return await prisma.healthMetric.findMany({
       where: {
         memberId: id,
-      },
-      orderBy: {
-        measuredAt: "desc",
       },
     });
   } catch (error) {
@@ -22,6 +21,27 @@ export async function getMetricsForMember(id: number | undefined): Promise<Healt
   }
 }
 
+export async function addMetric(metricType: MetricType, value: number, memberId: number|undefined, measuredAt?: Date) {
+  try {
+    if(!memberId) return { success: false };
+    const metric = await prisma.healthMetric.create({
+      data: {
+        metricType,
+        value,
+        memberId,
+        measuredAt: measuredAt ?? undefined
+      }
+    });
+    console.log('success!');
+    return { success: true, metric };
+
+  } catch (error) {
+    console.error('Metric creation error:', error);
+    return { success: false, error: 'Failed to add metric' };
+  }
+}
+
+// USER SERVER ACTIONS
 export async function loginUser(username: string, password: string) {
   try {
     const user = await prisma.user.findFirst({
@@ -45,24 +65,6 @@ export async function loginUser(username: string, password: string) {
   }
 }
 
-export async function addMetric(metricType: MetricType, value: number, memberId: number|undefined) {
-  try {
-    if(!memberId) return { success: false };
-    const metric = await prisma.healthMetric.create({
-      data: {
-        metricType,
-        value,
-        memberId
-      }
-    });
-
-    return { success: true, metric };
-
-  } catch (error) {
-    console.error('Metric creation error:', error);
-    return { success: false, error: 'Failed to add metric' };
-  }
-}
 
 
 export async function registerUser(username: string, password: string) {

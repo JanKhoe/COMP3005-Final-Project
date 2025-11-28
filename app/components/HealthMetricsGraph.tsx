@@ -6,6 +6,7 @@ import { Activity } from 'lucide-react';
 import { getMetricsForMember } from '../actions/auth';
 import { useUser } from '../contexts/UserContext';
 import { MetricType } from '@/generated/prisma';
+import AddMetricButton from './AddMetricBtn';
 
 // This component fetches and displays health metrics over time
 // For the actual implementation, you'll need to:
@@ -78,6 +79,7 @@ export default function HealthMetricsGraph({ metricType }: HealthMetricsGraphPro
     return (
       <div className="w-full max-w-4xl mx-auto p-6 bg-zinc-900 rounded-lg shadow-md border border-zinc-800">
         <div className="flex items-center justify-center h-96">
+            <AddMetricButton metricType={metricType} ></AddMetricButton>
           <div className="animate-pulse flex flex-col items-center">
             <Activity className="w-12 h-12 text-blue-400 mb-2" />
             <p className="text-zinc-400">Loading health metrics...</p>
@@ -89,7 +91,11 @@ export default function HealthMetricsGraph({ metricType }: HealthMetricsGraphPro
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-zinc-900 rounded-lg shadow-md border border-zinc-800">
+        <div className="flex items-center gap-3 mb-6">
+            <AddMetricButton metricType={metricType} ></AddMetricButton>
+        </div>
       <div className="flex items-center gap-3 mb-6">
+        
         <Activity className="w-8 h-8 text-blue-400" />
         <div>
           <h2 className="text-2xl font-bold text-zinc-100"> {metricType.toLocaleUpperCase()} </h2>
