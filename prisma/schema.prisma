@@ -1,0 +1,31 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+enum UserType {
+  member
+  trainer
+  system_admin
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String
+  password   String
+  typeOfUser UserType
+
+  member Member?
+}
+
+model Member {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+}
