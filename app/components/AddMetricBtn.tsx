@@ -5,15 +5,15 @@ import { addMetric } from '../actions/auth';
 import { MetricType } from '@/generated/prisma';
 import { useUser } from '@/app/contexts/UserContext'
 
-type Props = {
-    onRefresh: () => void;
-  };
+type ButtonProps = {
+  type: MetricType;
+};
 
-export default function AddMetricButton({ onRefresh }: Props) {
+export default function AddMetricButton({ type }: ButtonProps) {
 
   const { user, setUser, logout } = useUser()
 
-  const [MetricInput, setMetricInput] = useState('');
+  const [MetricInput, setMetricInput] = useState(0);
 
 
   const [MetricError, setMetricError] = useState(false);
@@ -24,7 +24,7 @@ export default function AddMetricButton({ onRefresh }: Props) {
   const handleAddMetric = async (e: React.FormEvent) => {
       e.preventDefault();
   
-      const result = await addMetric(MetricType.calories,100, user?.id);
+      const result = await addMetric(type, MetricInput, user?.id);
   
       if (result.success) {
         //TODO: do something after the metric gets added in
@@ -40,11 +40,11 @@ export default function AddMetricButton({ onRefresh }: Props) {
         Add Metric
       </button>
       <input
-        type="text"
+        type="number"
         placeholder="Enter a value"
         value={MetricInput}
                 onChange={(e) => {
-                  setMetricInput(e.target.value);
+                  setMetricInput(Number(e.target.value));
                   setMetricError(false);
                 }}
         id="MetricValue"

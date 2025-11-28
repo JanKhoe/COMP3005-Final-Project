@@ -3,6 +3,24 @@
 import { prisma } from '@/lib/prisma'
 import { UserType } from '@/generated/prisma'
 import { MetricType } from '@/generated/prisma'
+import type { HealthMetric } from '@/generated/prisma'
+
+export async function getMetricsForMember(id: number | undefined): Promise<HealthMetric[]> {
+  try {
+    console.log(id);
+    return await prisma.healthMetric.findMany({
+      where: {
+        memberId: id,
+      },
+      orderBy: {
+        measuredAt: "desc",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching metrics:", error);
+    return [];
+  }
+}
 
 export async function loginUser(username: string, password: string) {
   try {

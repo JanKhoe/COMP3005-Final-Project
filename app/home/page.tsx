@@ -1,6 +1,9 @@
 'use client'
 import { useState } from 'react';
 import { useUser } from '@/app/contexts/UserContext'
+import { MetricType } from '@/generated/prisma';
+import HealthMetricsGraph from '../components/HealthMetricsGraph'
+
 
 export default function Home() {
   const [refresh, setRefresh] = useState(false);
@@ -21,8 +24,8 @@ export default function Home() {
           </h1>
           
 
-          <div className="mt-8 w-full">
-            
+          <div className="w-full max-w-6xl mx-auto min-w-[800px]">
+            <HealthMetricsGraph metricType={MetricType.heartbeat}  ></HealthMetricsGraph>
           </div>
         </div>
       </main>
