@@ -2,9 +2,12 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 Video Tutorial: https://drive.google.com/file/d/1fgRUL5QDqZQiDr786I_oRTuIaKuK6o23/view?usp=sharing
 
-## COMP 3005 A3 - CRUD Web Application
+## COMP 3005 Final Project - Gym Management Application
+*Group members*
+- Jansen Khoe - 101260040
+- Jessica Hill -
+- Stanny Huang - 101272645
 
-This is Jansen Khoe's (101260040) submission for Assignemnt 3.
 A simple Web aplication that supports the creation, reading, updating and deleting of a student object that is stored in your local postgres database manager.
 
 ## How to setup
@@ -12,20 +15,21 @@ A simple Web aplication that supports the creation, reading, updating and deleti
 # Preliminary
 
 1. Make sure you have node installed on your local machine.
-2. download this repo as a zip file 
-3. open up a cmd terminal with COMP3005-A3-main as the working directory and run 'npm install'
+2. Download this repo as a zip file.
+3. Open up a cmd terminal with COMP3005-Final-Project as the working directory and run 'npm install'
 
 # Database Connection / Database Setup
 
-1. open up pgAdmin
+1. Open up pgAdmin
 2. Create a new database
-3. Create a .env file in the root of the project and add a variable called 'DATABASE_URL=postgresql://postgres:{userPassword}@localhost:5432/{DatabaseName}' (assuming that you have the existing user postgres otherwise change 'postgres' to an existing user and its password)
-4. going back to the terminal you used in `Preliminary` run `npm run setup` which will create a table and populate it with default student data
+3. Create a .env file in the root of the project and add a variable that is a link to that database.
+   Ex. 'DATABASE_URL=postgresql://postgres:{userPassword}@localhost:5432/{DatabaseName}' (assuming that you have the existing user postgres otherwise change 'postgres' to an existing user and its password)
+4. Go back to the terminal you used in `Preliminary` run `npx prisma migrate dev --name added init` which will create a table and populate it with default student data
 
 # Running the application
 
-1. using the same terminal you can run `npm run dev` which will launch the application at http://localhost:3000/
-2. from here you can see that the student list is always displayed and has support for creating, updating or deleting students. 
+1. Using the same terminal you can run `npm run dev` which will launch the application at http://localhost:3000/
+2. From here you should be greeted by the Login and Registration screen. You can populate a member account by registering, and upon login you will be greeted by a dashboard, where you can access the various features of our application.
 
 ## TA Information
 
