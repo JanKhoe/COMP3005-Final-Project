@@ -16,7 +16,8 @@ A simple Web aplication that supports the creation, reading, updating and deleti
 
 1. Make sure you have node installed on your local machine.
 2. Download this repo as a zip file.
-3. Open up a cmd terminal with COMP3005-Final-Project as the working directory and run 'npm install'
+3. Open up a cmd terminal with COMP3005-Final-Project as the working directory and run 'npm install' <br>
+   **NOTE: DO NOT UPDATE VULNERABILITIES! This will break the database setup.**
 
 # Database Connection / Database Setup
 
@@ -25,7 +26,8 @@ A simple Web aplication that supports the creation, reading, updating and deleti
 3. Create a .env file in the root of the project and add a variable that is a link to that database. <br>
    Ex. `DATABASE_URL=postgresql://postgres:{userPassword}@localhost:5432/{DatabaseName}` (assuming that you have the existing user postgres otherwise change 'postgres' to an existing user and its password)
 4. Run `npx prisma generate`
-5. Go back to the terminal you used in `Preliminary` run `npx prisma migrate dev --name added init` which will create a table and populate it with default student data
+5. Go back to the terminal you used in `Preliminary` run `npx prisma migrate dev --name added init` which will create a table and populate it with default student data <br>
+   
 
 # Running the application
 
