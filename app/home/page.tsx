@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useUser } from '@/app/contexts/UserContext'
 import { MetricType } from '@/generated/prisma';
 import HealthMetricsGraph from '../components/HealthMetricsGraph'
+import MetricCard from '../components/LatestMetricWidget';
 
 
 export default function Home() {
@@ -24,15 +25,24 @@ export default function Home() {
           </h1>
           
 
-          <div className="w-full max-w-6xl mx-auto min-w-[800px]">
-            <HealthMetricsGraph metricType={MetricType.heartbeat}  ></HealthMetricsGraph>
+          <div className="w-screen flex flex-col items-center gap-10">
+
+            <div className="w-full max-w-4xl mx-auto min-w-[400px]">
+              <HealthMetricsGraph metricType={MetricType.heartbeat} />
+              <MetricCard metricType={MetricType.heartbeat} />
+            </div>
+
+            <div className="w-full max-w-4xl mx-auto min-w-[56em]">
+              <HealthMetricsGraph metricType={MetricType.steps} />
+              <MetricCard metricType={MetricType.steps} />
+            </div>
+
+            <div className="w-full max-w-4xl mx-auto min-w-[56em]">
+              <HealthMetricsGraph metricType={MetricType.calories} />
+              <MetricCard metricType={MetricType.calories} />
+            </div>
           </div>
-          <div className="w-full max-w-6xl mx-auto min-w-[800px]">
-            <HealthMetricsGraph metricType={MetricType.steps}  ></HealthMetricsGraph>
-          </div>
-          <div className="w-full max-w-6xl mx-auto min-w-[800px]">
-            <HealthMetricsGraph metricType={MetricType.calories}  ></HealthMetricsGraph>
-          </div>
+
         </div>
       </main>
     </div>

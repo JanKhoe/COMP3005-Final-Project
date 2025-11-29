@@ -7,6 +7,7 @@ import { getMetricsForMember } from '../actions/auth';
 import { useUser } from '../contexts/UserContext';
 import { MetricType } from '@/generated/prisma';
 import AddMetricButton from './AddMetricBtn';
+import MetricCard from './LatestMetricWidget';
 
 // This component fetches and displays health metrics over time
 // For the actual implementation, you'll need to:
@@ -94,49 +95,51 @@ export default function HealthMetricsGraph({ metricType }: HealthMetricsGraphPro
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-zinc-900 rounded-lg shadow-md border border-zinc-800">
+    <div>
+      <div className="w-full max-w-4xl mx-auto p-6 bg-zinc-900 rounded-lg shadow-md border border-zinc-800">
+          <div className="flex items-center gap-3 mb-6">
+              <AddMetricButton metricType={metricType} ></AddMetricButton>
+          </div>
         <div className="flex items-center gap-3 mb-6">
-            <AddMetricButton metricType={metricType} ></AddMetricButton>
+          
+          <Activity className="w-8 h-8 text-blue-400" />
+          <div>
+            <h2 className="text-2xl font-bold text-zinc-100"> {metricType.toLocaleUpperCase()} </h2>
+          </div>
         </div>
-      <div className="flex items-center gap-3 mb-6">
-        
-        <Activity className="w-8 h-8 text-blue-400" />
-        <div>
-          <h2 className="text-2xl font-bold text-zinc-100"> {metricType.toLocaleUpperCase()} </h2>
-        </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-yellow-900/20 border border-yellow-800 rounded-lg">
+            <p className="text-sm text-yellow-200">
+              Using demo data. Error: {error}
+            </p>
+          </div>
+        )}
+
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" />
+            <XAxis 
+              dataKey="time" 
+              stroke="#a1a1aa"
+              style={{ fontSize: '14px' }}
+            />
+            <YAxis 
+              stroke="#a1a1aa"
+              style={{ fontSize: '14px' }}
+              label={{ value: 'Unit', angle: -90, position: 'insideLeft' }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="value" 
+              stroke="#3b82f6" 
+              strokeWidth={3}
+              dot={{ fill: '#3b82f6', r: 5 }}
+              activeDot={{ r: 7 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
-
-      {error && (
-        <div className="mb-4 p-3 bg-yellow-900/20 border border-yellow-800 rounded-lg">
-          <p className="text-sm text-yellow-200">
-            Using demo data. Error: {error}
-          </p>
-        </div>
-      )}
-
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" />
-          <XAxis 
-            dataKey="time" 
-            stroke="#a1a1aa"
-            style={{ fontSize: '14px' }}
-          />
-          <YAxis 
-            stroke="#a1a1aa"
-            style={{ fontSize: '14px' }}
-            label={{ value: 'BPM', angle: -90, position: 'insideLeft' }}
-          />
-          <Line 
-            type="monotone" 
-            dataKey="value" 
-            stroke="#3b82f6" 
-            strokeWidth={3}
-            dot={{ fill: '#3b82f6', r: 5 }}
-            activeDot={{ r: 7 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
     </div>
   );
 };
