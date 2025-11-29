@@ -9,6 +9,7 @@ import type { HealthMetric } from '@/generated/prisma'
 // METRIC SERVER ACTIONS
 export async function getMetricsForMember(id: number | undefined): Promise<HealthMetric[]> {
   try {
+    if (!id) return [];
     console.log(id);
     return await prisma.healthMetric.findMany({
       where: {
