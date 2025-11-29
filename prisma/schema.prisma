@@ -52,3 +52,21 @@ model HealthMetric {
   @@index([memberId])
   @@index([measuredAt])
 }
+
+model Trainer{
+  id                Int            @id @default(autoincrement())
+  TrainerId         Int            @unique
+  isWorking         Bool
+  hourlyRate        Int
+  certifications    Text
+  bio               Text
+
+  timeSlots         TimeSlot[]
+  classes           GroupClass[]
+  sessions          PTSession[]
+}
+
+model TimeSlot{
+  weeklySlot        DateTime    @unique
+  individualSlot    DateTime    @unique
+}
