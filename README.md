@@ -23,8 +23,8 @@ A simple Web aplication that supports the creation, reading, updating and deleti
 1. Open up pgAdmin
 2. Create a new database
 3. Create a .env file in the root of the project and add a variable that is a link to that database. <br>
-   Ex. 'DATABASE_URL=postgresql://postgres:{userPassword}@localhost:5432/{DatabaseName}' (assuming that you have the existing user postgres otherwise change 'postgres' to an existing user and its password)
-4. Run 'npx prisma generate'
+   Ex. `DATABASE_URL=postgresql://postgres:{userPassword}@localhost:5432/{DatabaseName}` (assuming that you have the existing user postgres otherwise change 'postgres' to an existing user and its password)
+4. Run `npx prisma generate`
 5. Go back to the terminal you used in `Preliminary` run `npx prisma migrate dev --name added init` which will create a table and populate it with default student data
 
 # Running the application
