@@ -7,18 +7,16 @@ import MetricCard from '../components/LatestMetricWidget';
 import { prisma } from '@/lib/prisma';
 
 
-export default async function AdminHome() {
+export default function AdminHome() {
   const [refresh, setRefresh] = useState(false);
   const { user, setUser, logout } = useUser();
-  const users = await prisma.user.findMany({
-    include: {
-      member: true
-    }
-  });
+
 
   const triggerRefresh = () => {
     setRefresh(!refresh);
   };
+
+  const users = [{id: 1, name: "jansen", typeOfUser: 'member'}];
 
   
   return (

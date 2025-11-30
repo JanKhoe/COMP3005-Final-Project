@@ -142,7 +142,7 @@ export async function getMember(userId: number | undefined): Promise<Member | nu
   try {
     const member = await prisma.member.findUnique({
       where: {
-        userId: userId,
+        id: userId,
       },
       include: {
         healthMetrics: true,
@@ -154,5 +154,33 @@ export async function getMember(userId: number | undefined): Promise<Member | nu
   } catch (error) {
     console.error("Error fetching member by userId:", error);
     return null;
+  }
+}
+
+export async function updateMemberInfo(
+  memberId: number,
+  dateOfBirth: string,
+  gender: Gender,
+  allergies: string,
+  medicalConditions: string
+) {
+  try {
+    const updatedMember = await prisma.member.update({
+      where: { id: memberId },
+      data: {
+        dob: new Date(dateOfBirth),
+        gender: gender,
+        allergies: allergies,
+        medicalConditions: medicalConditions,
+      },
+      include: {
+        user: true
+      }
+    });
+
+    return { success: true, member: updatedMember };
+  } catch (error) {
+    console.error('Update member info error:', error);
+    return { success: false, error: 'Failed to update member information' };
   }
 }

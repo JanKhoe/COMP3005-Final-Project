@@ -5,6 +5,7 @@ import { MetricType } from '@/generated/prisma';
 import HealthMetricsGraph from '../components/HealthMetricsGraph'
 import MetricCard from '../components/LatestMetricWidget';
 import { getMember } from '../actions/auth';
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [refresh, setRefresh] = useState(false);
@@ -21,6 +22,7 @@ export default function Home() {
     
     setIsLoading(true);
     const member = await getMember(user.memberId);
+    console.log(member)
     setMemberData(member);
     setIsLoading(false);
   };
@@ -31,6 +33,7 @@ export default function Home() {
 
   const formatDate = (date: Date | null | undefined) => {
     if (!date) return 'Not provided';
+    console.log(date);
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -38,10 +41,16 @@ export default function Home() {
     });
   };
 
+  const router = useRouter();
+
+  const editProfile = () => {
+    router.push("/home/edit");
+  };
+
   const calculateAge = (dateOfBirth: Date | null | undefined) => {
     if (!dateOfBirth) return null;
     const today = new Date();
-    const birthDate = new Date(dateOfBirth);
+    const birthDate = dateOfBirth;
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
@@ -59,7 +68,12 @@ export default function Home() {
             <h1 className="text-4xl font-semibold text-black dark:text-zinc-50">
               Hello, {user?.name}
             </h1>
-
+            <button
+              onClick={editProfile}
+              className="px-4 py-2 text-sm bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors"
+            >
+              Edit Profile
+            </button>
           </div>
 
           {isLoading ? (
@@ -77,10 +91,10 @@ export default function Home() {
                 <div>
                   <p className="text-sm text-zinc-400">Date of Birth</p>
                   <p className="text-white">
-                    {formatDate(memberData.dateOfBirth)}
-                    {memberData.dateOfBirth && (
+                    {formatDate(new Date(memberData.dob))}
+                    {memberData.dob && (
                       <span className="text-zinc-500 ml-2">
-                        ({calculateAge(memberData.dateOfBirth)} years old)
+                        ({calculateAge(memberData.dob)} years old)
                       </span>
                     )}
                   </p>
