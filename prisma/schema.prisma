@@ -35,6 +35,10 @@ model User {
 
 
   member Member?
+  member  Member?
+  trainer Trainer?
+  admin   Admin?
+>>>>>>> Stashed changes
   
   @@index([name])
 }

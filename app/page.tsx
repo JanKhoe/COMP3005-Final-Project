@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginUser } from '@/app/actions/auth'
 import { useUser } from '@/app/contexts/UserContext'
+import { UserType } from '@/generated/prisma';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -27,7 +28,11 @@ export default function LoginPage() {
         typeOfUser: result.user.typeOfUser,
         memberId: result.user.member?.id
       })
-      router.push('/home')
+      if (result.user.typeOfUser === UserType.system_admin) {
+        router.push('/admin_home')
+      } else {
+        router.push('/home')
+      }
     } else {
       setError(result.error || 'Login failed')
     }
