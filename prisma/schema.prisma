@@ -33,14 +33,9 @@ model User {
   password   String
   typeOfUser UserType @default(member)
 
-
-<<<<<<< Updated upstream
-  member Member?
-=======
   member  Member?
   trainer Trainer?
   admin   Admin?
->>>>>>> Stashed changes
   
   @@index([name])
 }
