@@ -92,7 +92,7 @@ model PTSessionOffering {
   member            Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
   trainerId         Int         @unique
   trainer           Trainer     @relation(fields: [trainerId], references: [id], onDelete: Cascade)
-  classOffering     ClassOffering  @relation(fields: [classOfferingId], references: [id], onDelete: Cascade)
+  classOffering     ClassOffering  @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@index([id])
 }
