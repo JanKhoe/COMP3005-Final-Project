@@ -34,8 +34,8 @@ model User {
   typeOfUser UserType @default(member)
 
   member  Member?
-  trainer Trainer?
-  admin   Admin?
+  //trainer Trainer?
+  //admin   Admin?
   
   @@index([name])
 }

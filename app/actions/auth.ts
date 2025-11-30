@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { UserType } from '@/generated/prisma'
 import { MetricType } from '@/generated/prisma'
 import type { HealthMetric } from '@/generated/prisma'
-import type { Member } from '@/generated/prisma'
+import type { Member, User } from '@/generated/prisma'
 import { Gender } from '@/generated/prisma'
 
 
@@ -182,5 +182,21 @@ export async function updateMemberInfo(
   } catch (error) {
     console.error('Update member info error:', error);
     return { success: false, error: 'Failed to update member information' };
+  }
+}
+
+export async function getAllUsers(): Promise<User[]> {
+  try {
+    const users = await prisma.user.findMany({
+      include: {
+        member: true,
+        //trainer: true,
+        //admin: true
+      }
+    });
+    return users;
+  } catch (error) {
+    console.error("Error fetching all members:", error);
+    return [];
   }
 }

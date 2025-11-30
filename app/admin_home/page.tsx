@@ -1,24 +1,34 @@
 'use client'
 import { useState } from 'react';
 import { useUser } from '@/app/contexts/UserContext'
-import { MetricType } from '@/generated/prisma';
+import { MetricType, User } from '@/generated/prisma';
 import HealthMetricsGraph from '../components/HealthMetricsGraph'
 import MetricCard from '../components/LatestMetricWidget';
 import { prisma } from '@/lib/prisma';
+import { getAllUsers } from '../actions/auth';
+import { useEffect } from 'react';
 
 
 export default function AdminHome() {
   const [refresh, setRefresh] = useState(false);
   const { user, setUser, logout } = useUser();
+  const [ users, setUsers ] = useState<User[]>([]);
 
+  // Cannot call async function of getAllUsers() directly, need to use useEffect or similar
+  useEffect(() => {
+    async function fetchUsers() {
+      const allUsers = await getAllUsers();
+      if (!allUsers) return;
+      setUsers(allUsers);
+    }
+    fetchUsers();
+  }, []);
 
   const triggerRefresh = () => {
     setRefresh(!refresh);
   };
 
-  const users = [{id: 1, name: "jansen", typeOfUser: 'member'}];
 
-  
   return (
 
     <div className="flex min-h-screen items-center bg-zinc-50 font-sans dark:bg-black">
