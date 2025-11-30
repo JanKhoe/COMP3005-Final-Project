@@ -43,7 +43,6 @@ export default async function AdminHome() {
                   </tr>
                 </thead>
                 <tbody>
-                  /*
 
                   {users.map((u) => (
                     <tr key={u.id} className="border-b hover:bg-gray-50">
@@ -52,7 +51,7 @@ export default async function AdminHome() {
                       <td className="py-2 px-4">{u.typeOfUser}</td>
                     </tr>
                   ))}
-                  */
+
                 </tbody>
               </table>
             </div>
