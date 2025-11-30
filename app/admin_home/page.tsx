@@ -40,31 +40,30 @@ export default function AdminHome() {
           
 
           <div className="w-screen flex flex-col items-center gap-10">
-
-            <div className="overflow-x-auto rounded-xl border border-gray-300 shadow">
-              <table className="min-w-full bg-white text-sm">
-                <thead className="bg-gray-100 border-b">
-                  <tr>
-                    <th className="py-3 px-4 text-left font-semibold">Timestamp</th>
-                    <th className="py-3 px-4 text-left font-semibold">Metric</th>
-                    <th className="py-3 px-4 text-left font-semibold">Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-
+            <div className="bg-zinc-900 max-w-6xl border border-zinc-800 rounded-lg p-6">
+              <h2 className="text-xl font-semibold text-white mb-4">Registered Users</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <table className="min-w-full bg-white text-sm">
+                    <thead className="bg-gray-100 border-b text-black">
+                    <tr>
+                      <th className="py-3 px-4 text-left font-semibold">Timestamp</th>
+                      <th className="py-3 px-4 text-left font-semibold">Metric</th>
+                      <th className="py-3 px-4 text-left font-semibold">Value</th>
+                     </tr>
+                    </thead>
+                  <tbody>
                   {users.map((u) => (
-                    <tr key={u.id} className="border-b hover:bg-gray-50">
+                    <tr key={u.id} className="border-b hover:bg-gray-50 text-black">
                       <td className="py-2 px-4">{u.id}</td>
                       <td className="py-2 px-4">{u.name}</td>
                       <td className="py-2 px-4">{u.typeOfUser}</td>
                     </tr>
                   ))}
-
                 </tbody>
               </table>
             </div>
           </div>
-
+          </div>
         </div>
       </main>
     </div>

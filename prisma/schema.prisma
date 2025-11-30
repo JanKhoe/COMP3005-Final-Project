@@ -70,6 +70,37 @@ model HealthMetric {
   @@index([measuredAt])
 }
 
+model ClassOffering {
+  id            Int        @id @default(autoincrement())
+  className     String
+  description   String
+  scheduleTime  DateTime
+  durationMins  Int
+  capacity      Int
+
+  groupClass GroupClassOffering @relation(fields: [id], references: [id], onDelete: Cascade)
+  ptSession  PTSessionOffering  @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  @@index([className])
+}
+
+model PTSessionOffering {
+  id            Int        @id @default(autoincrement())
+  sessionName   String
+  description   String
+  durationMins  Int
+  classOffering ClassOffering @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  @@index([sessionName])
+}
+
+model GroupClassOffering {
+  id                Int            @id @default(autoincrement())
+  classOfferingId   Int
+  classOffering     ClassOffering  @relation(fields: [id], references: [id], onDelete: Cascade)
+}
+
+
 model Trainer{
   id                Int            @id @default(autoincrement())
   isWorking         Boolean
