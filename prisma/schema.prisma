@@ -131,8 +131,6 @@ model PTSessionOffering {
 
   memberId          Int         @unique
   member            Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  trainerId         Int         @unique
-  trainer           Trainer     @relation(fields: [trainerId], references: [id], onDelete: Cascade)
   classOfferingId   Int         @unique
   classOffering     ClassOffering  @relation(fields: [classOfferingId], references: [id], onDelete: Cascade)
 
