@@ -34,7 +34,7 @@ model User {
   typeOfUser UserType @default(member)
 
   member  Member?
-  //trainer Trainer?
+  trainer Trainer?
   //admin   Admin?
   
   @@index([name])
@@ -55,6 +55,7 @@ model Member {
   stepsGoal           Float?
   
   healthMetrics HealthMetric[]
+  sessions PTSession[]
 }
 
 model HealthMetric {
@@ -69,24 +70,39 @@ model HealthMetric {
   @@index([measuredAt])
 }
 
-/*
 model Trainer{
   id                Int            @id @default(autoincrement())
-  TrainerId         Int            @unique
-  isWorking         Bool
+  isWorking         Boolean
   hourlyRate        Int
-  certifications    Text
-  bio               Text
+  certifications    String?
+  bio               String?
+  
+  userId            Int            @unique
   user              User           @relation(fields: [userId], references: [id])
-
   timeSlots         TimeSlot[]
-  classes           GroupClass[]
-  sessions          PTSession[]
+  sessions          PTSession[] // personal trainer
+  //classes           GroupClass[]
 }
 
 model TimeSlot{
-  weeklySlot        DateTime    @unique
-  individualSlot    DateTime    @unique
+  id                Int         @id @default(autoincrement())
+  timeStart         DateTime    // no overlapping within 1 trainer schedule
+  timeEnd           DateTime
+  isWeekly          Boolean
+
+  trainerId         Int         @unique
+  trainer           Trainer     @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  sessions          PTSession[]
 }
 
-*/
+model PTSession{
+  id                Int         @id @default(autoincrement())
+  goal_completed    Boolean
+
+  memberId          Int         @unique
+  member            Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  trainerId         Int         @unique
+  trainer           Trainer     @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  timeSlotId        Int         @unique
+  timeSlot          TimeSlot    @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
+}
