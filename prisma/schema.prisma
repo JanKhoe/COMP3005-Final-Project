@@ -55,7 +55,7 @@ model Member {
   stepsGoal           Float?
   
   healthMetrics HealthMetric[]
-  sessions PTSession[]
+  sessions PTSessionOffering[]
 }
 
 model HealthMetric {
@@ -78,28 +78,38 @@ model ClassOffering {
   durationMins  Int
   capacity      Int
 
-  groupClass GroupClassOffering @relation(fields: [id], references: [id], onDelete: Cascade)
-  ptSession  PTSessionOffering  @relation(fields: [id], references: [id], onDelete: Cascade)
+  groupClass GroupClassOffering?
+  ptSession  PTSessionOffering?
 
-  @@index([className])
+  @@index([id])
 }
 
 model PTSessionOffering {
-  id            Int        @id @default(autoincrement())
-  sessionName   String
-  description   String
-  durationMins  Int
-  classOffering ClassOffering @relation(fields: [id], references: [id], onDelete: Cascade)
+  id                Int        @id @default(autoincrement())
+  goal_completed    Boolean
 
-  @@index([sessionName])
+  memberId          Int         @unique
+  member            Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  trainerId         Int         @unique
+  trainer           Trainer     @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  classOffering     ClassOffering  @relation(fields: [classOfferingId], references: [id], onDelete: Cascade)
+
+  @@index([id])
 }
 
 model GroupClassOffering {
   id                Int            @id @default(autoincrement())
-  classOfferingId   Int
   classOffering     ClassOffering  @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  @@index([id])
 }
 
+model Rooms{
+  id          Int        @id @default(autoincrement())
+  roomNumber  String     @unique
+  capacity    Int
+  location    String
+}
 
 model Trainer{
   id                Int            @id @default(autoincrement())
@@ -110,30 +120,6 @@ model Trainer{
   
   userId            Int            @unique
   user              User           @relation(fields: [userId], references: [id])
-  timeSlots         TimeSlot[]
-  sessions          PTSession[] // personal trainer
+  sessions          PTSessionOffering[] // personal trainer
   //classes           GroupClass[]
-}
-
-model TimeSlot{
-  id                Int         @id @default(autoincrement())
-  timeStart         DateTime    // no overlapping within 1 trainer schedule
-  timeEnd           DateTime
-  isWeekly          Boolean
-
-  trainerId         Int         @unique
-  trainer           Trainer     @relation(fields: [trainerId], references: [id], onDelete: Cascade)
-  sessions          PTSession[]
-}
-
-model PTSession{
-  id                Int         @id @default(autoincrement())
-  goal_completed    Boolean
-
-  memberId          Int         @unique
-  member            Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  trainerId         Int         @unique
-  trainer           Trainer     @relation(fields: [trainerId], references: [id], onDelete: Cascade)
-  timeSlotId        Int         @unique
-  timeSlot          TimeSlot    @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
 }
