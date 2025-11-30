@@ -65,7 +65,6 @@ export default function HealthMetricsGraph({ metricType }: HealthMetricsGraphPro
       setError(null);
     } catch (err : any) {
       setError(err.message);
-      // Use demo data for preview
       setData([
         { time: 'Jan 1', value: 72, fullDate: 'Jan 1, 2024, 8:00 AM' },
         { time: 'Jan 2', value: 68, fullDate: 'Jan 2, 2024, 8:00 AM' },

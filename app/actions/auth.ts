@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { UserType } from '@/generated/prisma'
 import { MetricType } from '@/generated/prisma'
 import type { HealthMetric } from '@/generated/prisma'
+import type { Member } from '@/generated/prisma'
 
 
 // METRIC SERVER ACTIONS
@@ -101,5 +102,50 @@ export async function registerUser(username: string, password: string) {
   } catch (error) {
     console.error('Registration error:', error)
     return { success: false, error: 'Failed to create user' }
+  }
+}
+
+// Member functions
+
+export async function updateMemberGoal(
+  memberId: number,
+  metricType: MetricType,
+  goalValue: number
+) {
+  try {
+    const goalField = `${metricType}Goal` as 'heartbeatGoal' | 'caloriesGoal' | 'stepsGoal';
+    
+    await prisma.member.update({
+      where: { id: memberId },
+      data: { [goalField]: goalValue }
+    });
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating goal:', error);
+    return { success: false, error: 'Failed to update goal' };
+  }
+}
+
+
+
+export async function getMember(userId: number | undefined): Promise<Member | null> {
+  if (!userId) return null;
+
+  try {
+    const member = await prisma.member.findUnique({
+      where: {
+        userId: userId,   // because Member.userId is unique
+      },
+      include: {
+        healthMetrics: true,  // optional: include related metrics
+        user: true            // optional: include User info
+      }
+    });
+
+    return member;
+  } catch (error) {
+    console.error("Error fetching member by userId:", error);
+    return null;
   }
 }

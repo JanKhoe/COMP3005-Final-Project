@@ -37,6 +37,10 @@ model Member {
   id            Int            @id @default(autoincrement())
   userId        Int            @unique
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  heartbeatGoal    Float?
+  caloriesGoal     Float?
+  stepsGoal        Float?
   
   healthMetrics HealthMetric[]
 }
@@ -53,6 +57,7 @@ model HealthMetric {
   @@index([measuredAt])
 }
 
+/*
 model Trainer{
   id                Int            @id @default(autoincrement())
   TrainerId         Int            @unique
@@ -70,3 +75,5 @@ model TimeSlot{
   weeklySlot        DateTime    @unique
   individualSlot    DateTime    @unique
 }
+
+*/
