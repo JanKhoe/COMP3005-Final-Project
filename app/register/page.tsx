@@ -31,6 +31,8 @@ export default function LoginPage() {
       return;
     }
 
+    console.log
+
     const result = await registerUser(
       username,
       password,

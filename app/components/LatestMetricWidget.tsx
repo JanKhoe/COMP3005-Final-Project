@@ -107,7 +107,7 @@ export default function MetricCard({ metricType }: LatestMetricProps) {
   };
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 hover:border-zinc-700 transition-colors">
+    <div className="w-full bg-zinc-900 border max-w-3xl border-zinc-800 rounded-lg p-6 hover:border-zinc-700 transition-colors">
       <div className="space-y-3">
         <h3 className="text-sm font-medium text-zinc-400">
           Latest {metricType}

@@ -93,10 +93,10 @@ export async function registerUser(username: string, password: string, date_of_b
         typeOfUser: UserType.member,
         member: {
           create: {
-            dob: new Date(),
-            gender: Gender.OTHER,
-            allergies: "None",
-            medicalConditions: "None"
+            dob: new Date(date_of_birth),
+            gender: gender,
+            allergies: allergies,
+            medicalConditions: medical_conditions
           }
         }
       },
