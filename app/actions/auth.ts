@@ -7,6 +7,8 @@ import type { HealthMetric } from '@/generated/prisma'
 import type { Member } from '@/generated/prisma'
 
 
+
+
 // METRIC SERVER ACTIONS
 export async function getMetricsForMember(id: number | undefined): Promise<HealthMetric[]> {
   try {
@@ -57,7 +59,6 @@ export async function loginUser(username: string, password: string) {
       return { success: false, error: 'User not found' }
     }
 
-    // TODO: Use bcrypt.compare() when you add password hashing
     if (user.password !== password) {
       return { success: false, error: 'Invalid password' }
     }
@@ -135,11 +136,11 @@ export async function getMember(userId: number | undefined): Promise<Member | nu
   try {
     const member = await prisma.member.findUnique({
       where: {
-        userId: userId,   // because Member.userId is unique
+        userId: userId,
       },
       include: {
-        healthMetrics: true,  // optional: include related metrics
-        user: true            // optional: include User info
+        healthMetrics: true,
+        user: true            
       }
     });
 

@@ -8,7 +8,7 @@ import MetricCard from '../components/LatestMetricWidget';
 
 export default function Home() {
   const [refresh, setRefresh] = useState(false);
-  const { user, setUser, logout } = useUser()
+  const { user, setUser, logout } = useUser();
 
   const triggerRefresh = () => {
     setRefresh(!refresh);
@@ -22,6 +22,7 @@ export default function Home() {
         <div className="flex flex-col gap-6 text-center sm:items-start sm:text-left">
           <h1 className="max-w-s text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             Hello, {user?.name}
+            
           </h1>
           
 
