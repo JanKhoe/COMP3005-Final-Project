@@ -56,9 +56,9 @@ export default function MetricCard({ metricType }: LatestMetricProps) {
       const member = await getMember(user?.memberId);
       console.log(member);
       if(member){
-        const goalVal = member[metricType + "Goal" as keyof typeof member]
+        const goalVal = member[metricType + "Goal" as keyof typeof member] as number;
         if(goalVal){
-          setGoal(member[metricType + "Goal" as keyof typeof member]);
+          setGoal(goalVal);
           setNewGoalValue(goalVal.toString());
         }
         

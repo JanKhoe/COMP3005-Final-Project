@@ -5,6 +5,7 @@ import { UserType } from '@/generated/prisma'
 import { MetricType } from '@/generated/prisma'
 import type { HealthMetric } from '@/generated/prisma'
 import type { Member } from '@/generated/prisma'
+import { Gender } from '@/generated/prisma'
 
 
 
@@ -72,7 +73,7 @@ export async function loginUser(username: string, password: string) {
 
 
 
-export async function registerUser(username: string, password: string) {
+export async function registerUser(username: string, password: string, date_of_birth: string, gender: Gender, allergies: string, medical_conditions: string) {
     console.log(username, password);
   try {
     // Check if user already exists
@@ -91,7 +92,12 @@ export async function registerUser(username: string, password: string) {
         password: password,
         typeOfUser: UserType.member,
         member: {
-          create: {}
+          create: {
+            dob: new Date(),
+            gender: Gender.OTHER,
+            allergies: "None",
+            medicalConditions: "None"
+          }
         }
       },
       include: {
