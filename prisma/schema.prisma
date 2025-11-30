@@ -27,6 +27,7 @@ enum Gender{
   OTHER
 }
 
+// User model representing all users in the system (members, trainers, admins)
 model User {
   id         Int      @id @default(autoincrement())
   name       String   @unique
@@ -35,13 +36,15 @@ model User {
 
   member  Member?
   trainer Trainer?
-  //admin   Admin?
+  admin   Admin?
   
   @@index([name])
 }
 
+// Member model representing gym members (Largest model)
 model Member {
   id                  Int            @id @default(autoincrement())
+  // One-to-one relation with User
   userId              Int            @unique
   user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -50,14 +53,44 @@ model Member {
   allergies           String
   medicalConditions   String
 
+  // Fitness goals
   heartbeatGoal       Float?
   caloriesGoal        Float?
   stepsGoal           Float?
   
+  // 1-to-Many Relations with HealthMetrics and PTSessionOfferings
   healthMetrics HealthMetric[]
   sessions PTSessionOffering[]
+
+  // Many-to-many relationship with GroupClassOffering (group classes this member is attending)
+  groupClasses GroupClassOffering[] @relation("MembersInGroupClasses")
 }
 
+// Trainer model representing personal trainers
+model Trainer{
+  id                Int            @id @default(autoincrement())
+  // One-to-one relation with User
+  userId            Int            @unique
+  user              User           @relation(fields: [userId], references: [id])
+
+  isWorking         Boolean
+  hourlyRate        Int
+  certifications    String?
+  bio               String?
+  
+  registeredClasses ClassOffering[]
+}
+
+// Admin model representing system administrators
+model Admin{
+  id      Int    @id @default(autoincrement())
+
+  // One-to-one relation with User
+  userId  Int    @unique
+  user    User   @relation(fields: [userId], references: [id])
+}
+
+// HealthMetric model to track various health metrics for members
 model HealthMetric {
   id          Int        @id @default(autoincrement())
   metricType  MetricType
@@ -70,6 +103,7 @@ model HealthMetric {
   @@index([measuredAt])
 }
 
+// ClassOffering model representing both group classes and personal training sessions (contains both)
 model ClassOffering {
   id            Int        @id @default(autoincrement())
   className     String
@@ -81,45 +115,46 @@ model ClassOffering {
   groupClass GroupClassOffering?
   ptSession  PTSessionOffering?
 
+  // Each class offering is linked to a trainer and a room
+  trainerId  Int
+  trainer    Trainer    @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  roomId     Int
+  room       Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
   @@index([id])
 }
 
+// PTSessionOffering model for personal training sessions
 model PTSessionOffering {
   id                Int        @id @default(autoincrement())
   goal_completed    Boolean
 
   memberId          Int         @unique
   member            Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  trainerId         Int         @unique
-  trainer           Trainer     @relation(fields: [trainerId], references: [id], onDelete: Cascade)
   classOffering     ClassOffering  @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@index([id])
 }
 
+// GroupClassOffering model for group classes
 model GroupClassOffering {
   id                Int            @id @default(autoincrement())
+  attendeesCount    Int
   classOffering     ClassOffering  @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  // Many-to-many relationship with Members (members attending the class)
+  members          Member[]        @relation("MembersInGroupClasses")
 
   @@index([id])
 }
 
-model Rooms{
+// Room model representing rooms where ClasseOfferings are held
+model Room{
   id          Int        @id @default(autoincrement())
   roomNumber  String     @unique
   capacity    Int
   location    String
-}
 
-model Trainer{
-  id                Int            @id @default(autoincrement())
-  isWorking         Boolean
-  hourlyRate        Int
-  certifications    String?
-  bio               String?
-  
-  userId            Int            @unique
-  user              User           @relation(fields: [userId], references: [id])
-  sessions          PTSessionOffering[] // personal trainer
-  //classes           GroupClass[]
+  // Link to ClassOfferings held in this room
+  classOfferings ClassOffering[]
 }
