@@ -26,7 +26,7 @@ export default function AddMetricButton({ metricType }: ButtonProps) {
   const handleAddMetric = async (e: React.FormEvent) => {
       e.preventDefault();
   
-      const result = await addMetric(metricType, MetricInput, user?.id, measuredAtInput);
+      const result = await addMetric(metricType, MetricInput, user?.memberId, measuredAtInput);
   
       if (result.success) {
         console.log('yay!')
