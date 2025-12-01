@@ -205,7 +205,9 @@ export async function getAllClasses(): Promise<ClassOffering[]> {
     const classes = await prisma.classOffering.findMany({
       include: {
         trainer: true,
-        room: true
+        room: true,
+        groupClass: true,
+        ptSession: true
       }
     });
     return classes;
@@ -232,21 +234,55 @@ export async function addClassOffering(
   description: string,
   scheduleTime: Date,
   durationMins: number,
-  capacity: number,
   trainerId: number,
-  roomId: number
+  roomId: number,
+  classType: "group" | "pt",
+
+  gcCapacity?: number,
+  ptMemberId?: number,
+  ptGoal?: string
+
 ) {
   try {
-    await prisma.classOffering.create({
+    const classOffering = await prisma.classOffering.create({
       data: {
         className,
         description,
         scheduleTime,
         durationMins,
         trainerId,
-        roomId,
+        roomId
       }
     });
+
+    if (classType === "group") {
+      if (!gcCapacity) {
+        return { success: false, error: "Group class requires capacity." };
+      }
+
+      await prisma.groupClassOffering.create({
+        data: {
+          id: classOffering.id, // 1-to-1 relation
+          capacityCount: gcCapacity,
+          attendeesCount: 0,
+        },
+      });
+    }
+
+    if (classType === "pt") {
+      if (!ptMemberId) {
+        return { success: false, error: "PT Session requires a memberId." };
+      }
+
+      await prisma.pTSessionOffering.create({
+        data: {
+          memberId: ptMemberId,
+          classOfferingId: classOffering.id,
+          goal: ptGoal || "",
+          goal_completed: false,
+        },
+      });
+    }
 
     return { success: true };
   } catch (error) {

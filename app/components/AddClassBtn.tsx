@@ -12,7 +12,12 @@ export default function AddClassButton() {
   const [description, setDescription] = useState('');
   const [scheduleTime, setScheduleTime] = useState<Date>(new Date());
   const [durationMins, setDurationMins] = useState(60);
-  const [capacity, setCapacity] = useState(10);
+  const [classType, setClassType] = useState<"group" | "pt">("group");
+
+  // Conditional fields based on class type
+  const [gcCapacity, setGcCapacity] = useState(10);
+  const [ptMemberId, setPtMemberId] = useState<number | undefined>(undefined);
+  const [ptGoal, setPtGoal] = useState<string>('');
 
   // Required foreign keys
   const [trainerId, setTrainerId] = useState<number>(1);
@@ -28,9 +33,12 @@ export default function AddClassButton() {
       description,
       scheduleTime,
       durationMins,
-      capacity,
       trainerId,
-      roomId
+      roomId,
+      classType,
+      gcCapacity,
+      ptMemberId,
+      ptGoal
     );
 
     if (result.success) {
@@ -96,6 +104,58 @@ export default function AddClassButton() {
             onChange={(e) => setRoomId(Number(e.target.value))}
             className="px-3 py-2 border rounded"
         />
+
+        <h1>Class Type:</h1>
+        <select
+          value={classType}
+          onChange={(e) => setClassType(e.target.value as "group" | "pt")}
+          className="px-3 py-2 border rounded"
+        >
+          <option value="group">Group Class</option>
+          <option value="pt">PT Session</option>
+        </select>
+
+        {/* Show additional fields based on class type if needed */}
+        {classType === "group" && (
+          <div className="mt-4">
+            <label className="block mb-1 font-medium">Capacity Count</label>
+            <input
+              type="number"
+              className="px-3 py-2 border rounded w-full"
+              value={gcCapacity}
+              onChange={(e) => setGcCapacity(Number(e.target.value))}
+              placeholder="Enter class capacity"
+            />
+          </div>
+        )}
+
+
+        {classType === "pt" && (
+          <div className="mt-4">
+            <div>
+            <label className="block mb-1 font-medium">Select Member</label>
+              <input
+                type="number"
+                className="px-3 py-2 border rounded w-full"
+                value={ptMemberId}
+                onChange={(e) => setPtMemberId(Number(e.target.value))}
+                placeholder="Member ID"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium">Training Goal</label>
+              <input
+                type="text"
+                className="px-3 py-2 border rounded w-full"
+                value={ptGoal}
+                onChange={(e) => setPtGoal(e.target.value)}
+                placeholder="e.g. Weight loss, muscle gain…"
+              />
+            </div>
+          </div>
+        )}
+
 
         <p className="text-red-500 italic"> NOTE: Please ensure Trainer ID and Room ID exist in the system before creating a class. <br/>
                                             Also avoid creating classes that overlap in schedule for the same room.</p>

@@ -127,6 +127,7 @@ model ClassOffering {
 // PTSessionOffering model for personal training sessions
 model PTSessionOffering {
   id                Int        @id @default(autoincrement())
+  goal              String
   goal_completed    Boolean
 
   memberId          Int         @unique
