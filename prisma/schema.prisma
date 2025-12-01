@@ -148,6 +148,7 @@ model PTSessionOffering {
 model GroupClassOffering {
   id                Int            @id @default(autoincrement())
   capacityCount     Int
+  attendeesCount    Int
 
   classOfferingId   Int            @unique
   classOffering     ClassOffering  @relation(fields: [classOfferingId], references: [id], onDelete: Cascade)
