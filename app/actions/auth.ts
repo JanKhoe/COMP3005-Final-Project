@@ -53,7 +53,7 @@ export async function loginUser(username: string, password: string) {
   try {
     const user = await prisma.user.findFirst({
       where: { name: username },
-      include: { member: true }
+      include: { member: true, trainer: true }
     })
 
     if (!user) {

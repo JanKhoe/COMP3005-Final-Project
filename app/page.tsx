@@ -26,11 +26,16 @@ export default function LoginPage() {
         id: result.user.id,
         name: result.user.name,
         typeOfUser: result.user.typeOfUser,
-        memberId: result.user.member?.id
+        memberId: result.user.member?.id,
+        TrainerId: result.user.trainer?.id
       })
       if (result.user.typeOfUser === UserType.system_admin) {
         router.push('/admin_home')
-      } else {
+      }
+      else if(result.user.typeOfUser === UserType.trainer){
+        
+      }
+      else {
         router.push('/home')
       }
     } else {

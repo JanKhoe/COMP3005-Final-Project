@@ -6,6 +6,7 @@ type User = {
   name: string | undefined
   typeOfUser: string | undefined
   memberId?: number | undefined
+  TrainerId?: number | undefined
 }
 
 type UserContextType = {
