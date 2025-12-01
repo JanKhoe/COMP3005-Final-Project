@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { addClassOffering } from '../actions/auth';
+import setClasses from '../admin_home/page';
+import { refresh } from 'next/cache';
+import { error } from 'console';
 
 export default function AddClassButton() {
 
@@ -31,9 +34,9 @@ export default function AddClassButton() {
     );
 
     if (result.success) {
-      setMessage("Class created successfully!");
+      setMessage("Class created successfully! Refresh the page to see your changes.");
     } else {
-      setMessage("Failed to create class.");
+      setMessage("Failed to create class." + (result.error ? ` Error: ${result.error}` : '' ));
     }
   };
 
@@ -76,7 +79,7 @@ export default function AddClassButton() {
             className="px-3 py-2 border rounded"
         />
 
-        <h1>Trainer ID: </h1>
+        <h1>Trainer ID (Type ID): </h1>
         <input
             type="number"
             placeholder="Trainer ID"

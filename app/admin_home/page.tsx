@@ -1,17 +1,18 @@
 'use client'
 import { useState } from 'react';
 import { useUser } from '@/app/contexts/UserContext'
-import { User } from '@/generated/prisma';
+import { User, Room } from '@/generated/prisma';
 import { useEffect } from 'react';
 import type { ClassOffering } from '@/generated/prisma';
 import AddClassButton from '../components/AddClassBtn';
-import { getAllUsers, getAllClasses, addClassOffering } from '../actions/auth';
+import { getAllUsers, getAllClasses, getAllRooms, deleteClassOffering } from '../actions/auth';
 
 export default function AdminHome() {
   const [refresh, setRefresh] = useState(false);
   const { user, setUser, logout } = useUser();
   const [ users, setUsers ] = useState<User[]>([]);
   const [ classes, setClasses ] = useState<ClassOffering[]>([]);
+  const [ rooms, setRooms ] = useState<Room[]>([]);
 
   // Form states for new class offering
   const [className, setClassName] = useState('');
@@ -41,6 +42,16 @@ export default function AdminHome() {
       setClasses(allClasses);
     }
     fetchClasses();
+  }, []);
+
+  // Get all rooms for admin view
+  useEffect(() => {
+    async function fetchRooms() {
+      const allRooms = await getAllRooms();
+      if (!allRooms) return;
+      setRooms(allRooms);
+    }
+    fetchRooms();
   }, []);
 
   const triggerRefresh = () => {
@@ -133,6 +144,24 @@ export default function AdminHome() {
                   <td className="py-2 px-3">{c.description}</td>
                   <td className="py-2 px-3">{c.scheduleTime.toLocaleDateString()}</td>
 
+                  {/* Delete button */}
+                  <td className="py-2 px-3">
+                    <button
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                      onClick={async () => {
+                        if (confirm(`Are you sure you want to delete "${c.className}"?`)) {
+                          const result = await deleteClassOffering(c.id);
+
+                          if (result.success) {
+                            // Remove from state immediately
+                            setClasses(prev => prev.filter(cls => cls.id !== c.id));
+                          }
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -150,21 +179,22 @@ export default function AdminHome() {
             <thead className="bg-gray-100 dark:bg-zinc-800 text-black dark:text-white">
               <tr>
                 <th className="py-2 px-3 font-semibold">Room ID</th>
-                <th className="py-2 px-3 font-semibold">Description</th>
-                <th className="py-2 px-3 font-semibold">Classes Held</th>
+                <th className="py-2 px-3 font-semibold">Room Number</th>
+                <th className="py-2 px-3 font-semibold">Capacity</th>
+                <th className="py-2 px-3 font-semibold">Location</th>
               </tr>
             </thead>
 
             <tbody className="text-black dark:text-white">
-              {classes.map((c) => (
+              {rooms.map((r) => (
                 <tr
-                  key={c.id}
+                  key={r.id}
                   className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800"
                 >
-                  <td className="py-2 px-3">{c.className}</td>
-                  <td className="py-2 px-3">{c.description}</td>
-                  <td className="py-2 px-3">{c.scheduleTime.toLocaleDateString()}</td>
-
+                  <td className="py-2 px-3">{r.id}</td>
+                  <td className="py-2 px-3">{r.roomNumber}</td>
+                  <td className="py-2 px-3">{r.capacity}</td>
+                  <td className="py-2 px-3">{r.location}</td>
                 </tr>
               ))}
             </tbody>

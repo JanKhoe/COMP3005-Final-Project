@@ -3,14 +3,9 @@
 import { prisma } from '@/lib/prisma'
 import { UserType } from '@/generated/prisma'
 import { MetricType } from '@/generated/prisma'
-import type { HealthMetric } from '@/generated/prisma'
-import type { Member, User, Trainer, ClassOffering } from '@/generated/prisma'
 import { Gender } from '@/generated/prisma'
-import type { Trainer } from '@/generated/prisma'
-import type { ClassOffering } from '@/generated/prisma'
-
-
-
+import type { HealthMetric } from '@/generated/prisma'
+import type { Member, User, Trainer, ClassOffering, Room } from '@/generated/prisma'
 
 // METRIC SERVER ACTIONS
 export async function getMetricsForMember(id: number | undefined): Promise<HealthMetric[]> {
@@ -205,7 +200,78 @@ export async function getAllUsers(): Promise<User[]> {
   }
 }
 
-// Trainer functions
+// Function for getting all classeofferings for admin view
+export async function getAllClasses(): Promise<ClassOffering[]> {
+  try {
+    console.log("Fetching all classes...");
+    const classes = await prisma.classOffering.findMany({
+      include: {
+        trainer: true,
+        room: true
+      }
+    });
+    return classes;
+  } catch (error) {
+    console.error("Error fetching all classes:", error);
+    return [];
+  }
+}
+
+// Function for getting all rooms for admin view
+export async function getAllRooms(): Promise<Room[]> {
+  try {
+    const rooms = await prisma.room.findMany();
+    return rooms;
+  } catch (error) {
+    console.error("Error fetching all rooms:", error);
+    return [];
+  }
+}
+
+// Function for adding a new class offering (AddClassButton)
+export async function addClassOffering(
+  className: string,
+  description: string,
+  scheduleTime: Date,
+  durationMins: number,
+  capacity: number,
+  trainerId: number,
+  roomId: number
+) {
+  try {
+    await prisma.classOffering.create({
+      data: {
+        className,
+        description,
+        scheduleTime,
+        durationMins,
+        capacity,
+        trainerId,
+        roomId,
+      }
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error creating class offering:", error);
+    return { success: false, error };
+  }
+}
+
+// Function for deleting a class offering
+export async function deleteClassOffering(classId: number) {
+  try {
+    await prisma.classOffering.delete({
+      where: { id: classId }
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting class offering:", error);
+    return { success: false, error };
+  }
+}
+
+/// Trainer functions
 
 export async function getTrainer(userId: number | undefined): Promise<Trainer | null> {
   if (!userId) return null;
@@ -297,48 +363,3 @@ export async function getClassOfferings(
 //     return null;
 //   }
 // }
-// Function for getting all classeofferings for admin view
-export async function getAllClasses(): Promise<ClassOffering[]> {
-  try {
-    console.log("Fetching all classes...");
-    const classes = await prisma.classOffering.findMany({
-      include: {
-        trainer: true,
-        room: true
-      }
-    });
-    return classes;
-  } catch (error) {
-    console.error("Error fetching all classes:", error);
-    return [];
-  }
-}
-
-export async function addClassOffering(
-  className: string,
-  description: string,
-  scheduleTime: Date,
-  durationMins: number,
-  capacity: number,
-  trainerId: number,
-  roomId: number
-) {
-  try {
-    await prisma.classOffering.create({
-      data: {
-        className,
-        description,
-        scheduleTime,
-        durationMins,
-        capacity,
-        trainerId,
-        roomId,
-      }
-    });
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error creating class offering:", error);
-    return { success: false, error };
-  }
-}
