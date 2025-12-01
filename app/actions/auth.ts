@@ -238,29 +238,26 @@ export async function checkScheduleConflict(
   roomId: number
 ): Promise<boolean> {
   try {
-    const endTime = new Date(scheduleTime.getTime() + durationMins * 60000);  
-    const conflictingClasses = await prisma.classOffering.findMany({
-      where: {
-        roomId: roomId,
-        AND: [
-          {
-            scheduleTime: {
-              lt: endTime
-            }
-          },
-          {
-            scheduleTime: {
-              gt: new Date(scheduleTime.getTime() - durationMins * 60000)
-            }
-          }
-        ]
-      }
+    // Calculate end time of the new class
+    const newStart = scheduleTime;
+    const newEnd = new Date(scheduleTime.getTime() + durationMins * 60000);
+
+    // Fetch all classes in this room
+    const existingClasses = await prisma.classOffering.findMany({
+      where: { roomId }
     });
 
-    return conflictingClasses.length > 0;
+    // Check if any existing class overlaps with the new class
+    const hasConflict = existingClasses.some(classes => {
+      const classStart = classes.scheduleTime;
+      const classEnd = new Date(classes.scheduleTime.getTime() + classes.durationMins * 60000);
+      return newStart < classEnd && classStart < newEnd;
+    });
+
+    return hasConflict;
   } catch (error) {
     console.error("Error checking schedule conflict:", error);
-    return false;
+    return false; // fallback
   }
 }
 
@@ -303,7 +300,7 @@ export async function addClassOffering(
     // Check schedule conflicts
     const hasConflict = await checkScheduleConflict(scheduleTime, durationMins, roomId);
     if (hasConflict) {
-      return { success: false, error: "Schedule conflict detected for room" + roomId + " and time" + scheduleTime.toString() };
+      return { success: false, error: "Schedule conflict detected for room ID " + roomId + " and time " + scheduleTime.toString() };
     }
 
     if (classType === ClassType.group) {

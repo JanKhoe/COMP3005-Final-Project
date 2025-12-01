@@ -89,7 +89,8 @@ model Trainer{
 
 // Admin model representing system administrators
 model Admin{
-  id      Int    @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
+  accessLevel String
 
   // One-to-one relation with User
   userId  Int    @unique

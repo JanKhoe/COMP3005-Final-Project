@@ -14,11 +14,6 @@ VALUES
   ('Bob Smith', 'securepass', 'trainer'),
   ('Carla Lopez', 'trainme', 'trainer');
 
-
-
-DELETE FROM "Trainer"
-WHERE id = 10;
-
 -- Insert into Trainer using the IDs of the new Users
 INSERT INTO "Trainer" ("userId", "isWorking", "hourlyRate", "certifications", "bio")
 VALUES

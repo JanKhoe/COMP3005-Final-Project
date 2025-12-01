@@ -71,7 +71,10 @@ export default function AddClassButton() {
         <h1>Scheduled Time: </h1>
         <input
             type="datetime-local"
-            value={scheduleTime.toISOString().slice(0, 16)}
+            // Set value and onChange to handle timezone correctly
+            value={new Date(scheduleTime.getTime() - scheduleTime.getTimezoneOffset() * 60000)
+                    .toISOString()
+                    .slice(0,16)}
             onChange={(e) => setScheduleTime(new Date(e.target.value))}
             className="px-3 py-2 border rounded"
         />

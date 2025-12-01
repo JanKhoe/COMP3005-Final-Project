@@ -195,7 +195,7 @@ export default function AdminHome() {
                 >
                   <td className="py-2 px-3">{c.className}</td>
                   <td className="py-2 px-3">{c.description}</td>
-                  <td className="py-2 px-3">{c.scheduleTime.toLocaleTimeString()}</td>
+                  <td className="py-2 px-3">{c.scheduleTime.toLocaleDateString() + " " + c.scheduleTime.toLocaleTimeString()}</td>
                   <td className="py-2 px-3">{c.durationMins} mins</td>
                   <td className="py-2 px-3">{c.trainerId}</td>
                   <td className="py-2 px-3">{c.roomId}</td>
