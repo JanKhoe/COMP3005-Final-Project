@@ -88,11 +88,13 @@ export async function registerUser(username: string, password: string, date_of_b
       data: {
         name: username,
         password: password,
-        typeOfUser: UserType.trainer,
-        trainer: {
+        typeOfUser: UserType.member,
+        member: {
           create: {
-            isWorking: true,
-            hourlyRate: 10
+            dob: new Date(date_of_birth),
+            gender: gender,
+            allergies: allergies,
+            medicalConditions: medical_conditions
           }
         }
       },
@@ -262,6 +264,7 @@ export async function addClassOffering(
         data: {
           classOfferingId: classOffering.id, // 1-to-1 link
           capacityCount: gcCapacity || 10,
+          attendeesCount: 0
         }
       });
     }
