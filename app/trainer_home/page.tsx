@@ -87,13 +87,15 @@ export default function TrainerHome(){
                               <th className="py-3 px-4 text-left font-semibold">Class</th>
                               <th className="py-3 px-4 text-left font-semibold">Description</th>
                               <th className="py-3 px-4 text-left font-semibold">Trainer</th>
-                              
+                              <th className="py-3 px-4 text-left font-semibold">Room Name</th>
+                              <th className="py-3 px-4 text-left font-semibold">Room</th>
                               <th className="py-3 px-4 text-left font-semibold">Schedule</th>
                               <th className="py-3 px-4 text-left font-semibold">Duration (mins)</th>
                               <th className="py-3 px-4 text-left font-semibold">Capacity</th>
                               <th className="py-3 px-4 text-left font-semibold">Ateendees</th>
                               <th className="py-3 px-4 text-left font-semibold">Type</th>
                               <th className="py-3 px-4 text-left font-semibold">Goal Completed</th>
+                              <th className="py-3 px-4 text-left font-semibold">Room Capacity</th>
                               
                             </tr>
                           </thead>
@@ -103,13 +105,15 @@ export default function TrainerHome(){
                                             <td className="py-2 px-4">{c.className}</td>
                                             <td className="py-2 px-4">{c.description}</td>
                                             <td className="py-2 px-4">{user?.name}</td>
-                                            
+                                            <td className="py-2 px-4">{c.location}</td>
+                                            <td className="py-2 px-4">{c.roomNumber}</td>
                                             <td className="py-2 px-4">{new Date(c.scheduleTime).toLocaleString()}</td>
                                             <td className="py-2 px-4">{c.durationMins}</td>
                                             <td className="py-2 px-4">{c.capacityCount}</td>
                                             <td className="py-2 px-4">{c.attendeesCount}</td>
                                             <td className="py-2 px-4">{c.capacityCount==null ? "Personal Training" : "Group Class"}</td>
                                             <td className="py-2 px-4">{c.goalCompleted}</td>
+                                            <td className="py-2 px-4">{c.capacity}</td>
                                         </tr>
                               ))}
                             </tbody>
@@ -118,7 +122,7 @@ export default function TrainerHome(){
                   </div>
                 </div>
                 
-                // 
+                
               
               )}
             </div>
