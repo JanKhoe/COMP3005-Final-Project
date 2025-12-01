@@ -2,9 +2,7 @@
 
 import { useState } from 'react';
 import { addClassOffering } from '../actions/auth';
-import setClasses from '../admin_home/page';
-import { refresh } from 'next/cache';
-import { error } from 'console';
+import { ClassType } from '@/generated/prisma';
 
 export default function AddClassButton() {
 
@@ -12,7 +10,7 @@ export default function AddClassButton() {
   const [description, setDescription] = useState('');
   const [scheduleTime, setScheduleTime] = useState<Date>(new Date());
   const [durationMins, setDurationMins] = useState(60);
-  const [classType, setClassType] = useState<"group" | "pt">("group");
+  const [classType, setClassType] = useState<ClassType>(ClassType.group);
 
   // Conditional fields based on class type
   const [gcCapacity, setGcCapacity] = useState(10);
@@ -108,15 +106,15 @@ export default function AddClassButton() {
         <h1>Class Type:</h1>
         <select
           value={classType}
-          onChange={(e) => setClassType(e.target.value as "group" | "pt")}
+          onChange={(e) => setClassType(e.target.value as ClassType)}
           className="px-3 py-2 border rounded"
         >
-          <option value="group">Group Class</option>
-          <option value="pt">PT Session</option>
+          <option value={ClassType.group}>Group Class</option>
+          <option value={ClassType.personal_training}>PT Session</option>
         </select>
 
         {/* Show additional fields based on class type if needed */}
-        {classType === "group" && (
+        {classType === ClassType.group && (
           <div className="mt-4">
             <label className="block mb-1 font-medium">Capacity Count</label>
             <input
@@ -130,7 +128,7 @@ export default function AddClassButton() {
         )}
 
 
-        {classType === "pt" && (
+        {classType === ClassType.personal_training && (
           <div className="mt-4">
             <div>
             <label className="block mb-1 font-medium">Select Member</label>

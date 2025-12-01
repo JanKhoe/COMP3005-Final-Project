@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { UserType } from '@/generated/prisma'
 import { MetricType } from '@/generated/prisma'
 import { Gender } from '@/generated/prisma'
+import { ClassType } from '@/generated/prisma'
 import type { HealthMetric } from '@/generated/prisma'
 import type { Member, User, Trainer, ClassOffering, Room } from '@/generated/prisma'
 
@@ -236,7 +237,7 @@ export async function addClassOffering(
   durationMins: number,
   trainerId: number,
   roomId: number,
-  classType: "group" | "pt",
+  classType: ClassType,
 
   gcCapacity?: number,
   ptMemberId?: number,
@@ -251,36 +252,32 @@ export async function addClassOffering(
         scheduleTime,
         durationMins,
         trainerId,
-        roomId
+        roomId,
+        classType
       }
     });
 
-    if (classType === "group") {
-      if (!gcCapacity) {
-        return { success: false, error: "Group class requires capacity." };
-      }
-
+    if (classType === ClassType.group) {
       await prisma.groupClassOffering.create({
         data: {
-          id: classOffering.id, // 1-to-1 relation
-          capacityCount: gcCapacity,
-          attendeesCount: 0,
-        },
+          classOfferingId: classOffering.id, // 1-to-1 link
+          capacityCount: gcCapacity || 10,
+        }
       });
     }
 
-    if (classType === "pt") {
+    if (classType === ClassType.personal_training) {
       if (!ptMemberId) {
         return { success: false, error: "PT Session requires a memberId." };
       }
 
       await prisma.pTSessionOffering.create({
         data: {
-          memberId: ptMemberId,
           classOfferingId: classOffering.id,
-          goal: ptGoal || "",
+          memberId: ptMemberId,
           goal_completed: false,
-        },
+          goal: ptGoal || ''
+        }
       });
     }
 
