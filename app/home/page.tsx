@@ -1,13 +1,13 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useUser } from '@/app/contexts/UserContext'
-import { MetricType } from '@/generated/prisma';
+import { ClassType, MetricType } from '@/generated/prisma';
 import HealthMetricsGraph from '../components/HealthMetricsGraph'
 import MetricCard from '../components/LatestMetricWidget';
 import { getMember } from '../actions/auth';
 import { useRouter } from "next/navigation";
 import { Prisma } from '@/generated/prisma';
-import { getAllClasses } from '../actions/auth';
+import { getAllClasses, registerForClassOffering, getMemberRegisteredClasses } from '../actions/auth';
 
 export default function Home() {
 
@@ -25,6 +25,7 @@ export default function Home() {
   const [memberData, setMemberData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [ classes, setClasses ] = useState<ClassOfferingWithIncludes[]>([]);
+  const [ registered, setRegistered] = useState<number[]>([])
 
   useEffect(() => {
     fetchMemberData();
@@ -34,9 +35,14 @@ export default function Home() {
       async function fetchClasses() {
         const allClasses = await getAllClasses();
         if (!allClasses) return;
-        setClasses(allClasses);
+        setClasses(allClasses.filter(c => c.classType == 'group'));
+        if(!user?.memberId) return;
+        const registeredClasses = await getMemberRegisteredClasses(user?.memberId);
+        if(!registeredClasses) return;
+        setRegistered(registeredClasses?.map(gc => gc.id));
       }
       fetchClasses();
+      
     }, []);
 
   const fetchMemberData = async () => {
@@ -213,6 +219,25 @@ export default function Home() {
                             </td>
                             <td className="py-2 px-3">
                               {c.ptSession ? c.ptSession.goal : "N/A"}
+                            </td>
+                          
+                            {/* Register button */}
+                            <td className="py-2 px-3">
+                              {c.groupClass?.id && registered?.includes(c.groupClass.id) ? (
+                                <span className="text-green-600">Registered ✓</span>
+                              ) : (
+                                <button
+                                  className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                  onClick={async () => {
+                                    console.log('registered')
+                                    if(!user?.memberId) return;
+                                    if(!c.groupClass?.id) return;
+                                    registerForClassOffering(c.groupClass?.id, user?.memberId);
+                                  }}
+                                >
+                                  Register
+                                </button>
+                              )}
                             </td>
                           </tr>
                         ))}

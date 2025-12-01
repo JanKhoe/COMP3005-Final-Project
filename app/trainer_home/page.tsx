@@ -62,14 +62,14 @@ export default function TrainerHome(){
     };
 
     return (
-      <div className="flex min-h-screen items-center bg-zinc-50 font-sans dark:bg-black">
-        <main className="flex min-h-screen w-full flex-col items-center justify-between py-16 px-8 bg-white dark:bg-black">
-          <div className="w-full flex flex-col gap-8">
-            <div className="flex justify-between items-center">
-              <h1 className="text-4xl font-semibold text-black dark:text-zinc-50">
-                Hello, Trainer {user?.name}
-              </h1>
-            </div>
+        <div className="flex min-h-screen items-center bg-zinc-50 font-sans dark:bg-black">
+          <main className="flex min-h-screen w-full flex-col items-center justify-between py-16 px-8 bg-white dark:bg-black">
+            <div className="w-full flex flex-col gap-8">
+              <div className="flex justify-between items-center">
+                <h1 className="text-4xl font-semibold text-black dark:text-zinc-50">
+                  Hello, Trainer {user?.name}
+                </h1>
+              </div>
             {!trainerData ? (
               <div className='w-full max-w-8xl flex items-center justify-center'>
                 <div className="bg-zinc-900 max-w-6xl border border-zinc-800 rounded-lg p-6">

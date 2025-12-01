@@ -5,6 +5,9 @@ CREATE TYPE "UserType" AS ENUM ('member', 'trainer', 'system_admin');
 CREATE TYPE "MetricType" AS ENUM ('heartbeat', 'calories', 'steps');
 
 -- CreateEnum
+CREATE TYPE "ClassType" AS ENUM ('group', 'personal_training');
+
+-- CreateEnum
 CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE', 'OTHER');
 
 -- CreateTable
@@ -70,6 +73,7 @@ CREATE TABLE "ClassOffering" (
     "description" TEXT NOT NULL,
     "scheduleTime" TIMESTAMP(3) NOT NULL,
     "durationMins" INTEGER NOT NULL,
+    "classType" "ClassType" NOT NULL,
     "trainerId" INTEGER NOT NULL,
     "roomId" INTEGER NOT NULL,
 
@@ -79,6 +83,7 @@ CREATE TABLE "ClassOffering" (
 -- CreateTable
 CREATE TABLE "PTSessionOffering" (
     "id" SERIAL NOT NULL,
+    "goal" TEXT NOT NULL,
     "goal_completed" BOOLEAN NOT NULL,
     "memberId" INTEGER NOT NULL,
     "classOfferingId" INTEGER NOT NULL,
@@ -91,6 +96,7 @@ CREATE TABLE "GroupClassOffering" (
     "id" SERIAL NOT NULL,
     "capacityCount" INTEGER NOT NULL,
     "attendeesCount" INTEGER NOT NULL,
+    "classOfferingId" INTEGER NOT NULL,
 
     CONSTRAINT "GroupClassOffering_pkey" PRIMARY KEY ("id")
 );
@@ -147,6 +153,9 @@ CREATE UNIQUE INDEX "PTSessionOffering_classOfferingId_key" ON "PTSessionOfferin
 CREATE INDEX "PTSessionOffering_id_idx" ON "PTSessionOffering"("id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "GroupClassOffering_classOfferingId_key" ON "GroupClassOffering"("classOfferingId");
+
+-- CreateIndex
 CREATE INDEX "GroupClassOffering_id_idx" ON "GroupClassOffering"("id");
 
 -- CreateIndex
@@ -180,7 +189,7 @@ ALTER TABLE "PTSessionOffering" ADD CONSTRAINT "PTSessionOffering_memberId_fkey"
 ALTER TABLE "PTSessionOffering" ADD CONSTRAINT "PTSessionOffering_classOfferingId_fkey" FOREIGN KEY ("classOfferingId") REFERENCES "ClassOffering"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "GroupClassOffering" ADD CONSTRAINT "GroupClassOffering_id_fkey" FOREIGN KEY ("id") REFERENCES "ClassOffering"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "GroupClassOffering" ADD CONSTRAINT "GroupClassOffering_classOfferingId_fkey" FOREIGN KEY ("classOfferingId") REFERENCES "ClassOffering"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_MembersInGroupClasses" ADD CONSTRAINT "_MembersInGroupClasses_A_fkey" FOREIGN KEY ("A") REFERENCES "GroupClassOffering"("id") ON DELETE CASCADE ON UPDATE CASCADE;

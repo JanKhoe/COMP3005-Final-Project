@@ -231,6 +231,39 @@ export async function getAllRooms(): Promise<Room[]> {
   }
 }
 
+// Function for checking schedule conflicts when adding a new class offering
+export async function checkScheduleConflict(
+  scheduleTime: Date,
+  durationMins: number,
+  roomId: number
+): Promise<boolean> {
+  try {
+    const endTime = new Date(scheduleTime.getTime() + durationMins * 60000);  
+    const conflictingClasses = await prisma.classOffering.findMany({
+      where: {
+        roomId: roomId,
+        AND: [
+          {
+            scheduleTime: {
+              lt: endTime
+            }
+          },
+          {
+            scheduleTime: {
+              gt: new Date(scheduleTime.getTime() - durationMins * 60000)
+            }
+          }
+        ]
+      }
+    });
+
+    return conflictingClasses.length > 0;
+  } catch (error) {
+    console.error("Error checking schedule conflict:", error);
+    return false;
+  }
+}
+
 // Function for adding a new class offering (AddClassButton)
 export async function addClassOffering(
   className: string,
@@ -258,6 +291,20 @@ export async function addClassOffering(
         classType
       }
     });
+
+    const room = await prisma.room.findUnique({
+      where: { id: roomId }
+    });
+
+    // Check capacity constraints
+    if (room && room.capacity < (gcCapacity || 10)) {
+      return { success: false, error: "Room capacity is less than the group class capacity." };
+    }
+    // Check schedule conflicts
+    const hasConflict = await checkScheduleConflict(scheduleTime, durationMins, roomId);
+    if (hasConflict) {
+      return { success: false, error: "Schedule conflict detected for room" + roomId + " and time" + scheduleTime.toString() };
+    }
 
     if (classType === ClassType.group) {
       await prisma.groupClassOffering.create({
@@ -302,6 +349,30 @@ export async function deleteClassOffering(classId: number) {
     console.error("Error deleting class offering:", error);
     return { success: false, error };
   }
+}
+
+export async function registerForClassOffering(groupClassId: number, memberId: number){
+  await prisma.groupClassOffering.update({
+  where: { id: groupClassId },
+  data: {
+    members: {
+      connect: { id: memberId }
+    }
+  }
+})
+}
+
+export async function getMemberRegisteredClasses(memberId: number) {
+  const member = await prisma.member.findUnique({
+    where: { id: memberId },
+    include: {
+      groupClasses: true
+    }
+  });
+
+  if (!member) return null;
+
+  return member.groupClasses;
 }
 
 /// TRAINER PAGE FUNCTIONS
