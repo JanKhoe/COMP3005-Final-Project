@@ -21,6 +21,11 @@ enum MetricType {
   steps
 }
 
+enum ClassType {
+  group
+  personal_training
+}
+
 enum Gender{
   MALE
   FEMALE
@@ -111,6 +116,7 @@ model ClassOffering {
   description   String
   scheduleTime  DateTime
   durationMins  Int
+  classType     ClassType
 
   groupClass GroupClassOffering?
   ptSession  PTSessionOffering?
@@ -142,8 +148,9 @@ model PTSessionOffering {
 model GroupClassOffering {
   id                Int            @id @default(autoincrement())
   capacityCount     Int
-  attendeesCount    Int
-  classOffering     ClassOffering  @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  classOfferingId   Int            @unique
+  classOffering     ClassOffering  @relation(fields: [classOfferingId], references: [id], onDelete: Cascade)
 
   // Many-to-many relationship with Members (members attending the class)
   members          Member[]        @relation("MembersInGroupClasses")

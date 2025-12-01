@@ -180,6 +180,7 @@ export default function AdminHome() {
                 <th className="py-2 px-3 font-semibold">Duration</th>
                 <th className="py-2 px-3 font-semibold">Trainer</th>
                 <th className="py-2 px-3 font-semibold">Room</th>
+                <th className="py-2 px-3 font-semibold">Class Type</th>
                 <th className="py-2 px-3 font-semibold">Capacity</th>
                 <th className="py-2 px-3 font-semibold">Member ID</th>
                 <th className="py-2 px-3 font-semibold">Goal</th>
@@ -198,6 +199,7 @@ export default function AdminHome() {
                   <td className="py-2 px-3">{c.durationMins} mins</td>
                   <td className="py-2 px-3">{c.trainerId}</td>
                   <td className="py-2 px-3">{c.roomId}</td>
+                  <td className="py-2 px-3">{c.classType}</td>
                   {/* Conditional Columns */}
                   <td className="py-2 px-3">
                     {c.groupClass?.capacityCount ? c.groupClass?.capacityCount : "N/A"}
