@@ -6,12 +6,23 @@ import { useEffect } from 'react';
 import type { ClassOffering } from '@/generated/prisma';
 import AddClassButton from '../components/AddClassBtn';
 import { getAllUsers, getAllClasses, getAllRooms, deleteClassOffering } from '../actions/auth';
+import { Prisma } from '@/generated/prisma';
 
 export default function AdminHome() {
+  
+  type ClassOfferingWithIncludes = Prisma.ClassOfferingGetPayload<{
+  include: {
+      trainer: true;
+      room: true;
+      groupClass: true;
+      ptSession: true;
+    };
+  }>;
+
   const [refresh, setRefresh] = useState(false);
   const { user, setUser, logout } = useUser();
   const [ users, setUsers ] = useState<User[]>([]);
-  const [ classes, setClasses ] = useState<ClassOffering[]>([]);
+  const [ classes, setClasses ] = useState<ClassOfferingWithIncludes[]>([]);
   const [ rooms, setRooms ] = useState<Room[]>([]);
   const [classType, setClassType] = useState<"group" | "pt">("group");
 
@@ -189,7 +200,7 @@ export default function AdminHome() {
                   <td className="py-2 px-3">{c.roomId}</td>
                   {/* Conditional Columns */}
                   <td className="py-2 px-3">
-                    {c.capacityCount ? c.capacityCount : "N/A"}
+                    {c.groupClass?.capacityCount ? c.groupClass?.capacityCount : "N/A"}
                   </td>
                   <td className="py-2 px-3">
                     {c.ptSession ? c.ptSession.memberId : "N/A"}

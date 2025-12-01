@@ -131,7 +131,7 @@ export async function updateMemberGoal(
 
 
 
-export async function getMember(userId: number | undefined): Promise<Member | null> {
+export async function getMember(userId: number | undefined) {
   if (!userId) return null;
 
   try {
@@ -199,7 +199,7 @@ export async function getAllUsers(): Promise<User[]> {
 }
 
 // Function for getting all classeofferings for admin view
-export async function getAllClasses(): Promise<ClassOffering[]> {
+export async function getAllClasses(){
   try {
     console.log("Fetching all classes...");
     const classes = await prisma.classOffering.findMany({
