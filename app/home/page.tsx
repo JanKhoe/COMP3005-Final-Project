@@ -6,16 +6,38 @@ import HealthMetricsGraph from '../components/HealthMetricsGraph'
 import MetricCard from '../components/LatestMetricWidget';
 import { getMember } from '../actions/auth';
 import { useRouter } from "next/navigation";
+import { Prisma } from '@/generated/prisma';
+import { getAllClasses } from '../actions/auth';
 
 export default function Home() {
+
+  type ClassOfferingWithIncludes = Prisma.ClassOfferingGetPayload<{
+    include: {
+        trainer: true;
+        room: true;
+        groupClass: true;
+        ptSession: true;
+      };
+    }>;
+
   const [refresh, setRefresh] = useState(false);
   const { user, setUser, logout } = useUser();
   const [memberData, setMemberData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [ classes, setClasses ] = useState<ClassOfferingWithIncludes[]>([]);
 
   useEffect(() => {
     fetchMemberData();
   }, [user?.memberId]);
+
+    useEffect(() => {
+      async function fetchClasses() {
+        const allClasses = await getAllClasses();
+        if (!allClasses) return;
+        setClasses(allClasses);
+      }
+      fetchClasses();
+    }, []);
 
   const fetchMemberData = async () => {
     if (!user?.memberId) return;
@@ -147,6 +169,56 @@ export default function Home() {
               </div>
             </div>
           </div>
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6 mb-2">
+                    <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">
+                      Registered Classes
+                    </h2>
+          
+                    {/* Header */}
+                    <table className="w-full text-sm text-left">
+                      <thead className="bg-gray-100 dark:bg-zinc-800 text-black dark:text-white">
+                        <tr>
+                          <th className="py-2 px-3 font-semibold">Class</th>
+                          <th className="py-2 px-3 font-semibold">Description</th>
+                          <th className="py-2 px-3 font-semibold">Scheduled Time</th>
+                          <th className="py-2 px-3 font-semibold">Duration</th>
+                          <th className="py-2 px-3 font-semibold">Trainer</th>
+                          <th className="py-2 px-3 font-semibold">Room</th>
+                          <th className="py-2 px-3 font-semibold">Class Type</th>
+                          <th className="py-2 px-3 font-semibold">Capacity</th>
+                          <th className="py-2 px-3 font-semibold">Member ID</th>
+                          <th className="py-2 px-3 font-semibold">Goal</th>
+                        </tr>
+                      </thead>
+          
+                      <tbody className="text-black dark:text-white">
+                        {classes.map((c) => (
+                          <tr
+                            key={c.id}
+                            className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800"
+                          >
+                            <td className="py-2 px-3">{c.className}</td>
+                            <td className="py-2 px-3">{c.description}</td>
+                            <td className="py-2 px-3">{c.scheduleTime.toLocaleTimeString()}</td>
+                            <td className="py-2 px-3">{c.durationMins} mins</td>
+                            <td className="py-2 px-3">{c.trainerId}</td>
+                            <td className="py-2 px-3">{c.roomId}</td>
+                            <td className="py-2 px-3">{c.classType}</td>
+                            {/* Conditional Columns */}
+                            <td className="py-2 px-3">
+                              {c.groupClass?.capacityCount ? c.groupClass?.capacityCount : "N/A"}
+                            </td>
+                            <td className="py-2 px-3">
+                              {c.ptSession ? c.ptSession.memberId : "N/A"}
+                            </td>
+                            <td className="py-2 px-3">
+                              {c.ptSession ? c.ptSession.goal : "N/A"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
         </div>
       </main>

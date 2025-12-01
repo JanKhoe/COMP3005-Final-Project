@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { UserType } from '@/generated/prisma'
 import { MetricType } from '@/generated/prisma'
 import { Gender } from '@/generated/prisma'
+import { ClassType } from '@/generated/prisma'
 import type { HealthMetric } from '@/generated/prisma'
 import type { Member, User, Trainer, ClassOffering, Room } from '@/generated/prisma'
 
@@ -87,11 +88,13 @@ export async function registerUser(username: string, password: string, date_of_b
       data: {
         name: username,
         password: password,
-        typeOfUser: UserType.trainer,
-        trainer: {
+        typeOfUser: UserType.member,
+        member: {
           create: {
-            isWorking: true,
-            hourlyRate: 10
+            dob: new Date(date_of_birth),
+            gender: gender,
+            allergies: allergies,
+            medicalConditions: medical_conditions
           }
         }
       },
@@ -129,7 +132,9 @@ export async function updateMemberGoal(
   }
 }
 
-export async function getMember(userId: number | undefined): Promise<Member | null> {
+
+
+export async function getMember(userId: number | undefined) {
   if (!userId) return null;
 
   try {
@@ -197,13 +202,15 @@ export async function getAllUsers(): Promise<User[]> {
 }
 
 // Function for getting all classeofferings for admin view
-export async function getAllClasses(): Promise<ClassOffering[]> {
+export async function getAllClasses(){
   try {
     console.log("Fetching all classes...");
     const classes = await prisma.classOffering.findMany({
       include: {
         trainer: true,
-        room: true
+        room: true,
+        groupClass: true,
+        ptSession: true
       }
     });
     return classes;
@@ -230,12 +237,17 @@ export async function addClassOffering(
   description: string,
   scheduleTime: Date,
   durationMins: number,
-  capacity: number,
   trainerId: number,
-  roomId: number
+  roomId: number,
+  classType: ClassType,
+
+  gcCapacity?: number,
+  ptMemberId?: number,
+  ptGoal?: string
+
 ) {
   try {
-    await prisma.classOffering.create({
+    const classOffering = await prisma.classOffering.create({
       data: {
         className,
         description,
@@ -243,8 +255,34 @@ export async function addClassOffering(
         durationMins,
         trainerId,
         roomId,
+        classType
       }
     });
+
+    if (classType === ClassType.group) {
+      await prisma.groupClassOffering.create({
+        data: {
+          classOfferingId: classOffering.id, // 1-to-1 link
+          capacityCount: gcCapacity || 10,
+          attendeesCount: 0
+        }
+      });
+    }
+
+    if (classType === ClassType.personal_training) {
+      if (!ptMemberId) {
+        return { success: false, error: "PT Session requires a memberId." };
+      }
+
+      await prisma.pTSessionOffering.create({
+        data: {
+          classOfferingId: classOffering.id,
+          memberId: ptMemberId,
+          goal_completed: false,
+          goal: ptGoal || ''
+        }
+      });
+    }
 
     return { success: true };
   } catch (error) {

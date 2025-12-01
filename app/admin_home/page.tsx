@@ -6,23 +6,25 @@ import { useEffect } from 'react';
 import type { ClassOffering } from '@/generated/prisma';
 import AddClassButton from '../components/AddClassBtn';
 import { getAllUsers, getAllClasses, getAllRooms, deleteClassOffering } from '../actions/auth';
+import { Prisma } from '@/generated/prisma';
 
 export default function AdminHome() {
+  
+  type ClassOfferingWithIncludes = Prisma.ClassOfferingGetPayload<{
+  include: {
+      trainer: true;
+      room: true;
+      groupClass: true;
+      ptSession: true;
+    };
+  }>;
+
   const [refresh, setRefresh] = useState(false);
   const { user, setUser, logout } = useUser();
   const [ users, setUsers ] = useState<User[]>([]);
-  const [ classes, setClasses ] = useState<ClassOffering[]>([]);
+  const [ classes, setClasses ] = useState<ClassOfferingWithIncludes[]>([]);
   const [ rooms, setRooms ] = useState<Room[]>([]);
-
-  // Form states for new class offering
-  const [className, setClassName] = useState('');
-  const [description, setDescription] = useState('');
-  const [scheduleTime, setScheduleTime] = useState(new Date());
-  const [durationMins, setDurationMins] = useState(60);
-  const [capacity, setCapacity] = useState(10);
-  const [trainerId, setTrainerId] = useState(1);
-  const [roomId, setRoomId] = useState(1);
-  const [message, setMessage] = useState('');
+  const [classType, setClassType] = useState<"group" | "pt">("group");
 
   // Cannot call async function of getAllUsers() directly, need to use useEffect or similar
   useEffect(() => {
@@ -73,6 +75,15 @@ export default function AdminHome() {
     return 'N/A';
   }
 
+  // Helper function
+  /*
+  const getClassType = (c: ClassOffering) => {
+    if (c.groupClass) return "Group Class";
+    if (c.ptSession) return "Personal Training";
+    return "Unknown";
+  };
+  */
+
   return (
   // Start of main container
   <div className="min-h-screen bg-zinc-50 dark:bg-black flex justify-center items-start py-20 px-4">
@@ -83,7 +94,7 @@ export default function AdminHome() {
       </h1>
 
       {/* GRID FOR MULTIPLE TABLES */}
-      <div className="grid grid-cols-2 md:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
 
         {/* USERS TABLE */}
         <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6">
@@ -112,56 +123,6 @@ export default function AdminHome() {
                   <td className="py-2 px-3">{u.name}</td>
                   <td className="py-2 px-3">{u.typeOfUser}</td>
                   <td className="py-2 px-3">{getRoleId(u)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* CLASSOFFERING TABLES */}
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6">
-          <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">
-            Registered Classes
-          </h2>
-
-          {/* Header */}
-          <table className="w-full text-sm text-left">
-            <thead className="bg-gray-100 dark:bg-zinc-800 text-black dark:text-white">
-              <tr>
-                <th className="py-2 px-3 font-semibold">Class</th>
-                <th className="py-2 px-3 font-semibold">Description</th>
-                <th className="py-2 px-3 font-semibold">Scheduled Time</th>
-              </tr>
-            </thead>
-
-            <tbody className="text-black dark:text-white">
-              {classes.map((c) => (
-                <tr
-                  key={c.id}
-                  className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800"
-                >
-                  <td className="py-2 px-3">{c.className}</td>
-                  <td className="py-2 px-3">{c.description}</td>
-                  <td className="py-2 px-3">{c.scheduleTime.toLocaleDateString()}</td>
-
-                  {/* Delete button */}
-                  <td className="py-2 px-3">
-                    <button
-                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                      onClick={async () => {
-                        if (confirm(`Are you sure you want to delete "${c.className}"?`)) {
-                          const result = await deleteClassOffering(c.id);
-
-                          if (result.success) {
-                            // Remove from state immediately
-                            setClasses(prev => prev.filter(cls => cls.id !== c.id));
-                          }
-                        }
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -201,6 +162,79 @@ export default function AdminHome() {
           </table>
         </div>
 
+      </div>
+
+      {/* CLASSOFFERING TABLES */}
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6 mb-2">
+          <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">
+            Registered Classes
+          </h2>
+
+          {/* Header */}
+          <table className="w-full text-sm text-left">
+            <thead className="bg-gray-100 dark:bg-zinc-800 text-black dark:text-white">
+              <tr>
+                <th className="py-2 px-3 font-semibold">Class</th>
+                <th className="py-2 px-3 font-semibold">Description</th>
+                <th className="py-2 px-3 font-semibold">Scheduled Time</th>
+                <th className="py-2 px-3 font-semibold">Duration</th>
+                <th className="py-2 px-3 font-semibold">Trainer</th>
+                <th className="py-2 px-3 font-semibold">Room</th>
+                <th className="py-2 px-3 font-semibold">Class Type</th>
+                <th className="py-2 px-3 font-semibold">Capacity</th>
+                <th className="py-2 px-3 font-semibold">Member ID</th>
+                <th className="py-2 px-3 font-semibold">Goal</th>
+              </tr>
+            </thead>
+
+            <tbody className="text-black dark:text-white">
+              {classes.map((c) => (
+                <tr
+                  key={c.id}
+                  className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800"
+                >
+                  <td className="py-2 px-3">{c.className}</td>
+                  <td className="py-2 px-3">{c.description}</td>
+                  <td className="py-2 px-3">{c.scheduleTime.toLocaleTimeString()}</td>
+                  <td className="py-2 px-3">{c.durationMins} mins</td>
+                  <td className="py-2 px-3">{c.trainerId}</td>
+                  <td className="py-2 px-3">{c.roomId}</td>
+                  <td className="py-2 px-3">{c.classType}</td>
+                  {/* Conditional Columns */}
+                  <td className="py-2 px-3">
+                    {c.groupClass?.capacityCount ? c.groupClass?.capacityCount : "N/A"}
+                  </td>
+                  <td className="py-2 px-3">
+                    {c.ptSession ? c.ptSession.memberId : "N/A"}
+                  </td>
+                  <td className="py-2 px-3">
+                    {c.ptSession ? c.ptSession.goal : "N/A"}
+                  </td>
+                
+                  {/* Delete button */}
+                  <td className="py-2 px-3">
+                    <button
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                      onClick={async () => {
+                        if (confirm(`Are you sure you want to delete "${c.className}"?`)) {
+                          const result = await deleteClassOffering(c.id);
+
+                          if (result.success) {
+                            // Remove from state immediately
+                            setClasses(prev => prev.filter(cls => cls.id !== c.id));
+                          }
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
         {/* CREATE CLASS FORM */}
         <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6">
           <div className="mt-6">
@@ -208,7 +242,7 @@ export default function AdminHome() {
           </div>
         </div>
         
-      </div>
+
     </main>
   </div>
   );
