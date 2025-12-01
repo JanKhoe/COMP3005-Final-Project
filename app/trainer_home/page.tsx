@@ -8,6 +8,11 @@ import { getClassOfferings } from '../actions/auth';
 import { getTrainer } from '../actions/auth';
 // import { useRouter } from "next/navigation";
 
+// app/api/trainer/[id]/work/route.ts
+import { NextResponse } from 'next/server';
+
+
+
 export default function TrainerHome(){
     const [refresh, setRefresh] = useState(false);
     const {user, setUser, logout } = useUser();
@@ -16,8 +21,24 @@ export default function TrainerHome(){
     // const [trainerData, setTrainerData] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const fetchTrainerData = async () => {
+      try {
+        const response = await fetch('/api/trainerWorkData');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch trainerdata');
+        }
+        
+        const data = await response.json();
+        console.log(data);
+      } catch (err) {
+        console.log(err)
+      }
+    };
+
     useEffect(() => {
-        fetchClassOfferingsData();
+        //fetchClassOfferingsData();
+        fetchTrainerData();
     }, [user?.TrainerId]);
 
     const fetchClassOfferingsData = async () => {
@@ -27,6 +48,10 @@ export default function TrainerHome(){
             console.log(classData)
             setClassData(classData);  
             setIsLoading(false);
+
+
+
+            
         }
    
     const triggerRefresh = () => {

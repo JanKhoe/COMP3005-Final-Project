@@ -245,7 +245,6 @@ export async function addClassOffering(
         description,
         scheduleTime,
         durationMins,
-        capacity,
         trainerId,
         roomId,
       }
@@ -300,7 +299,6 @@ type ClassOfferingWithRelations = {
   description: string;
   scheduleTime: Date;
   durationMins: number;
-  capacity: number;
   trainerId: number;
   roomId: number;
   trainer: {

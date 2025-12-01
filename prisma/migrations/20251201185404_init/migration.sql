@@ -70,7 +70,6 @@ CREATE TABLE "ClassOffering" (
     "description" TEXT NOT NULL,
     "scheduleTime" TIMESTAMP(3) NOT NULL,
     "durationMins" INTEGER NOT NULL,
-    "capacity" INTEGER NOT NULL,
     "trainerId" INTEGER NOT NULL,
     "roomId" INTEGER NOT NULL,
 
@@ -90,6 +89,7 @@ CREATE TABLE "PTSessionOffering" (
 -- CreateTable
 CREATE TABLE "GroupClassOffering" (
     "id" SERIAL NOT NULL,
+    "capacityCount" INTEGER NOT NULL,
     "attendeesCount" INTEGER NOT NULL,
 
     CONSTRAINT "GroupClassOffering_pkey" PRIMARY KEY ("id")

@@ -1,0 +1,42 @@
+// scripts/createViews.ts
+import pool from '@/lib/db'; // adjust path to your pool
+
+async function createTrainerWorkView() {
+  try {
+    await pool.query(`
+      DROP VIEW IF EXISTS trainer_work_data;
+      
+      CREATE VIEW trainer_work_data AS
+      SELECT 
+        t.id as trainer_id,
+        co.id as class_offering_id,
+        co."className",
+        co.description,
+        co."scheduleTime",
+        co."durationMins",
+        
+        -- PT Session specific data
+        pts.id as pt_session_id,
+        pts."goal_completed",
+        pts."memberId",
+        
+        -- Group Class specific data
+        gc.id as group_class_id,
+        gc."capacityCount",
+        gc."attendeesCount"
+        
+      FROM "Trainer" t
+      LEFT JOIN "ClassOffering" co ON t.id = co."trainerId"
+      LEFT JOIN "PTSessionOffering" pts ON co.id = pts."classOfferingId"
+      LEFT JOIN "GroupClassOffering" gc ON co.id = gc.id;
+    `);
+    
+    console.log('View created successfully');
+  } catch (error) {
+    console.error('Error creating view:', error);
+  } finally {
+    await pool.end();
+  }
+}
+
+createTrainerWorkView();
