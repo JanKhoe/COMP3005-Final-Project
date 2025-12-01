@@ -2,6 +2,9 @@
 INSERT INTO "User" (name, password, "typeOfUser")
 VALUES ('admin', 'adminpass', 'system_admin');
 
+INSERT INTO "Admin" ("userId", "accessLevel")
+VALUES (1, 'superuser');
+
 
 -- Insert trainer users into the User table
 
