@@ -315,6 +315,19 @@ export async function registerForClassOffering(groupClassId: number, memberId: n
 })
 }
 
+export async function getMemberRegisteredClasses(memberId: number) {
+  const member = await prisma.member.findUnique({
+    where: { id: memberId },
+    include: {
+      groupClasses: true
+    }
+  });
+
+  if (!member) return null;
+
+  return member.groupClasses;
+}
+
 /// TRAINER PAGE FUNCTIONS
 
 export async function getTrainer(userId: number | undefined): Promise<Trainer | null> {

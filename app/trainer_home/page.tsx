@@ -105,7 +105,7 @@ export default function TrainerHome(){
                                             <td className="py-2 px-4">{c.className}</td>
                                             <td className="py-2 px-4">{c.description}</td>
                                             <td className="py-2 px-4">{user?.name}</td>
-                                            <td className="py-2 px-4">{c.location}</td>
+                                            <td className="py-2 px-4">{c.room_location}</td>
                                             <td className="py-2 px-4">{c.roomNumber}</td>
                                             <td className="py-2 px-4">{new Date(c.scheduleTime).toLocaleString()}</td>
                                             <td className="py-2 px-4">{c.durationMins}</td>
