@@ -87,13 +87,11 @@ export async function registerUser(username: string, password: string, date_of_b
       data: {
         name: username,
         password: password,
-        typeOfUser: UserType.member,
-        member: {
+        typeOfUser: UserType.trainer,
+        trainer: {
           create: {
-            dob: new Date(date_of_birth),
-            gender: gender,
-            allergies: allergies,
-            medicalConditions: medical_conditions
+            isWorking: true,
+            hourlyRate: 10
           }
         }
       },

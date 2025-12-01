@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
 export interface TrainerWorkData {
@@ -25,11 +25,19 @@ export async function getTrainerWork(trainerId: number): Promise<TrainerWorkData
   return result.rows;
 }
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const trainerId = parseInt(params.id);
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const id = searchParams.get('id');
+  
+  if (!id) {
+    return NextResponse.json(
+      { error: 'Trainer ID is required' },
+      { status: 400 }
+    );
+  }
+  
+  const trainerId = parseInt(id);
   const work = await getTrainerWork(trainerId);
+  
   return NextResponse.json(work);
 }

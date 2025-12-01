@@ -1,5 +1,10 @@
 // scripts/createViews.ts
-import pool from '@/lib/db'; // adjust path to your pool
+const { Pool } = require('pg');
+require('dotenv').config({ path: '.env' });
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 async function createTrainerWorkView() {
   try {
@@ -40,3 +45,6 @@ async function createTrainerWorkView() {
 }
 
 createTrainerWorkView();
+
+
+

@@ -21,9 +21,9 @@ export default function TrainerHome(){
     // const [trainerData, setTrainerData] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const fetchTrainerData = async () => {
+    const fetchTrainerData = async (trainerId: number) => {
       try {
-        const response = await fetch('/api/trainerWorkData');
+        const response = await fetch(`/api/trainerWorkData?id=${trainerId}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch trainerdata');
@@ -31,14 +31,16 @@ export default function TrainerHome(){
         
         const data = await response.json();
         console.log(data);
+        return data;
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     };
 
     useEffect(() => {
         //fetchClassOfferingsData();
-        fetchTrainerData();
+        if(!user?.TrainerId) return;
+        fetchTrainerData(user?.TrainerId);
     }, [user?.TrainerId]);
 
     const fetchClassOfferingsData = async () => {
