@@ -1,5 +1,10 @@
 // scripts/createTriggers.ts
-import pool from '@/lib/db';
+const { Pool } = require('pg');
+require('dotenv').config({ path: '.env' });
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 async function createAttendeeCountTrigger() {
   try {

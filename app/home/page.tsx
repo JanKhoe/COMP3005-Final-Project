@@ -7,7 +7,7 @@ import MetricCard from '../components/LatestMetricWidget';
 import { getMember } from '../actions/auth';
 import { useRouter } from "next/navigation";
 import { Prisma } from '@/generated/prisma';
-import { getAllClasses } from '../actions/auth';
+import { getAllClasses, registerForClassOffering } from '../actions/auth';
 
 export default function Home() {
 
@@ -213,6 +213,20 @@ export default function Home() {
                             </td>
                             <td className="py-2 px-3">
                               {c.ptSession ? c.ptSession.goal : "N/A"}
+                            </td>
+                          
+                            {/* Register button */}
+                            <td className="py-2 px-3">
+                              <button
+                                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                onClick={async () => {
+                                  console.log('registered')
+                                  if(!user?.memberId) return;
+                                  registerForClassOffering(c.id, user?.memberId);
+                                }}
+                              >
+                                Delete
+                              </button>
                             </td>
                           </tr>
                         ))}

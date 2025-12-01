@@ -304,6 +304,17 @@ export async function deleteClassOffering(classId: number) {
   }
 }
 
+export async function registerForClassOffering(groupClassId: number, memberId: number){
+  await prisma.groupClassOffering.update({
+  where: { id: groupClassId },
+  data: {
+    members: {
+      connect: { id: memberId }
+    }
+  }
+})
+}
+
 /// TRAINER PAGE FUNCTIONS
 
 export async function getTrainer(userId: number | undefined): Promise<Trainer | null> {
