@@ -34,9 +34,10 @@ model User {
   password   String
   typeOfUser UserType @default(member)
 
-  member  Member?
-  trainer Trainer?
-  admin   Admin?
+  // One-to-one relations to specific roles
+  member      Member?
+  trainer     Trainer?
+  admin       Admin?
   
   @@index([name])
 }
@@ -110,7 +111,6 @@ model ClassOffering {
   description   String
   scheduleTime  DateTime
   durationMins  Int
-  capacity      Int
 
   groupClass GroupClassOffering?
   ptSession  PTSessionOffering?
@@ -140,6 +140,7 @@ model PTSessionOffering {
 // GroupClassOffering model for group classes
 model GroupClassOffering {
   id                Int            @id @default(autoincrement())
+  capacityCount     Int
   attendeesCount    Int
   classOffering     ClassOffering  @relation(fields: [id], references: [id], onDelete: Cascade)
 

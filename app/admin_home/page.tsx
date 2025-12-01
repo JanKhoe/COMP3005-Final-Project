@@ -1,18 +1,27 @@
 'use client'
 import { useState } from 'react';
 import { useUser } from '@/app/contexts/UserContext'
-import { MetricType, User } from '@/generated/prisma';
-import HealthMetricsGraph from '../components/HealthMetricsGraph'
-import MetricCard from '../components/LatestMetricWidget';
-import { prisma } from '@/lib/prisma';
-import { getAllUsers } from '../actions/auth';
+import { User } from '@/generated/prisma';
 import { useEffect } from 'react';
-
+import type { ClassOffering } from '@/generated/prisma';
+import AddClassButton from '../components/AddClassBtn';
+import { getAllUsers, getAllClasses, addClassOffering } from '../actions/auth';
 
 export default function AdminHome() {
   const [refresh, setRefresh] = useState(false);
   const { user, setUser, logout } = useUser();
   const [ users, setUsers ] = useState<User[]>([]);
+  const [ classes, setClasses ] = useState<ClassOffering[]>([]);
+
+  // Form states for new class offering
+  const [className, setClassName] = useState('');
+  const [description, setDescription] = useState('');
+  const [scheduleTime, setScheduleTime] = useState(new Date());
+  const [durationMins, setDurationMins] = useState(60);
+  const [capacity, setCapacity] = useState(10);
+  const [trainerId, setTrainerId] = useState(1);
+  const [roomId, setRoomId] = useState(1);
+  const [message, setMessage] = useState('');
 
   // Cannot call async function of getAllUsers() directly, need to use useEffect or similar
   useEffect(() => {
@@ -24,49 +33,153 @@ export default function AdminHome() {
     fetchUsers();
   }, []);
 
+  // Get all classes for admin view
+  useEffect(() => {
+    async function fetchClasses() {
+      const allClasses = await getAllClasses();
+      if (!allClasses) return;
+      setClasses(allClasses);
+    }
+    fetchClasses();
+  }, []);
+
   const triggerRefresh = () => {
     setRefresh(!refresh);
   };
 
+  // Helper function to handle finding type ID based on user type
+  function getRoleId(user: {
+    member?: { id: number } | null;
+    trainer?: { id: number } | null;
+    admin?: { id: number } | null;
+    [key: string]: any;
+  }) {
+    // If member, trainer, or admin exists in User, return their ID
+    if (user.member && user.member.id != null) return user.member.id;
+    if (user.trainer && user.trainer.id != null) return user.trainer.id;
+    if (user.admin && user.admin.id != null) return user.admin.id;
+    // Otherwise return N/A
+    return 'N/A';
+  }
 
   return (
+  // Start of main container
+  <div className="min-h-screen bg-zinc-50 dark:bg-black flex justify-center items-start py-20 px-4">
+    <main className="w-full max-w-6xl">
 
-    <div className="flex min-h-screen items-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <div className="flex flex-col gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-s text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Hello, Admin {user?.name}
-          </h1>
-          
+      <h1 className="text-3xl font-semibold text-black dark:text-zinc-50 mb-10">
+        Hello, {user?.name} <p className="text-red-500">(Admin)</p>
+      </h1>
 
-          <div className="w-screen flex flex-col items-center gap-10">
-            <div className="bg-zinc-900 max-w-6xl border border-zinc-800 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-white mb-4">Registered Users</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <table className="min-w-full bg-white text-sm">
-                    <thead className="bg-gray-100 border-b text-black">
-                    <tr>
-                      <th className="py-3 px-4 text-left font-semibold">Timestamp</th>
-                      <th className="py-3 px-4 text-left font-semibold">Metric</th>
-                      <th className="py-3 px-4 text-left font-semibold">Value</th>
-                     </tr>
-                    </thead>
-                  <tbody>
-                  {users.map((u) => (
-                    <tr key={u.id} className="border-b hover:bg-gray-50 text-black">
-                      <td className="py-2 px-4">{u.id}</td>
-                      <td className="py-2 px-4">{u.name}</td>
-                      <td className="py-2 px-4">{u.typeOfUser}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+      {/* GRID FOR MULTIPLE TABLES */}
+      <div className="grid grid-cols-2 md:grid-cols-2 gap-10">
+
+        {/* USERS TABLE */}
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6">
+          <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">
+            Registered Users
+          </h2>
+
+          {/* Header */}
+          <table className="w-full text-sm text-left">
+            <thead className="bg-gray-100 dark:bg-zinc-800 text-black dark:text-white">
+              <tr>
+                <th className="py-2 px-3 font-semibold">User ID</th>
+                <th className="py-2 px-3 font-semibold">Name</th>
+                <th className="py-2 px-3 font-semibold">Type</th>
+                <th className="py-2 px-3 font-semibold">Type ID</th>
+              </tr>
+            </thead>
+
+            <tbody className="text-black dark:text-white">
+              {users.map((u) => (
+                <tr
+                  key={u.id}
+                  className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800"
+                >
+                  <td className="py-2 px-3">{u.id}</td>
+                  <td className="py-2 px-3">{u.name}</td>
+                  <td className="py-2 px-3">{u.typeOfUser}</td>
+                  <td className="py-2 px-3">{getRoleId(u)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* CLASSOFFERING TABLES */}
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6">
+          <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">
+            Registered Classes
+          </h2>
+
+          {/* Header */}
+          <table className="w-full text-sm text-left">
+            <thead className="bg-gray-100 dark:bg-zinc-800 text-black dark:text-white">
+              <tr>
+                <th className="py-2 px-3 font-semibold">Class</th>
+                <th className="py-2 px-3 font-semibold">Description</th>
+                <th className="py-2 px-3 font-semibold">Scheduled Time</th>
+              </tr>
+            </thead>
+
+            <tbody className="text-black dark:text-white">
+              {classes.map((c) => (
+                <tr
+                  key={c.id}
+                  className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800"
+                >
+                  <td className="py-2 px-3">{c.className}</td>
+                  <td className="py-2 px-3">{c.description}</td>
+                  <td className="py-2 px-3">{c.scheduleTime.toLocaleDateString()}</td>
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* ROOM OPTIONS TABLE */}
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6">
+          <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">
+            Room Options
+          </h2>
+
+          {/* Header */}
+          <table className="w-full text-sm text-left">
+            <thead className="bg-gray-100 dark:bg-zinc-800 text-black dark:text-white">
+              <tr>
+                <th className="py-2 px-3 font-semibold">Room ID</th>
+                <th className="py-2 px-3 font-semibold">Description</th>
+                <th className="py-2 px-3 font-semibold">Classes Held</th>
+              </tr>
+            </thead>
+
+            <tbody className="text-black dark:text-white">
+              {classes.map((c) => (
+                <tr
+                  key={c.id}
+                  className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800"
+                >
+                  <td className="py-2 px-3">{c.className}</td>
+                  <td className="py-2 px-3">{c.description}</td>
+                  <td className="py-2 px-3">{c.scheduleTime.toLocaleDateString()}</td>
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* CREATE CLASS FORM */}
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6">
+          <div className="mt-6">
+            <AddClassButton/>
           </div>
         </div>
-      </main>
-    </div>
+        
+      </div>
+    </main>
+  </div>
   );
-  
 }

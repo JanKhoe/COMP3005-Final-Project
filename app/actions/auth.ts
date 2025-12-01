@@ -6,6 +6,8 @@ import { MetricType } from '@/generated/prisma'
 import type { HealthMetric } from '@/generated/prisma'
 import type { Member, User, Trainer, ClassOffering } from '@/generated/prisma'
 import { Gender } from '@/generated/prisma'
+import type { Trainer } from '@/generated/prisma'
+import type { ClassOffering } from '@/generated/prisma'
 
 
 
@@ -185,13 +187,15 @@ export async function updateMemberInfo(
   }
 }
 
+/// ADMIN PAGE FUNCTIONS
+// Function for getting all members for admin view
 export async function getAllUsers(): Promise<User[]> {
   try {
     const users = await prisma.user.findMany({
       include: {
         member: true,
-        //trainer: true,
-        //admin: true
+        trainer: true,
+        admin: true
       }
     });
     return users;
@@ -293,3 +297,48 @@ export async function getClassOfferings(
 //     return null;
 //   }
 // }
+// Function for getting all classeofferings for admin view
+export async function getAllClasses(): Promise<ClassOffering[]> {
+  try {
+    console.log("Fetching all classes...");
+    const classes = await prisma.classOffering.findMany({
+      include: {
+        trainer: true,
+        room: true
+      }
+    });
+    return classes;
+  } catch (error) {
+    console.error("Error fetching all classes:", error);
+    return [];
+  }
+}
+
+export async function addClassOffering(
+  className: string,
+  description: string,
+  scheduleTime: Date,
+  durationMins: number,
+  capacity: number,
+  trainerId: number,
+  roomId: number
+) {
+  try {
+    await prisma.classOffering.create({
+      data: {
+        className,
+        description,
+        scheduleTime,
+        durationMins,
+        capacity,
+        trainerId,
+        roomId,
+      }
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error creating class offering:", error);
+    return { success: false, error };
+  }
+}
