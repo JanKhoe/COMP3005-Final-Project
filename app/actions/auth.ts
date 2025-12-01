@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { UserType } from '@/generated/prisma'
 import { MetricType } from '@/generated/prisma'
 import type { HealthMetric } from '@/generated/prisma'
-import type { Member, User } from '@/generated/prisma'
+import type { Member, User, Trainer, ClassOffering } from '@/generated/prisma'
 import { Gender } from '@/generated/prisma'
 
 
@@ -200,3 +200,96 @@ export async function getAllUsers(): Promise<User[]> {
     return [];
   }
 }
+
+// Trainer functions
+
+export async function getTrainer(userId: number | undefined): Promise<Trainer | null> {
+  if (!userId) return null;
+ 
+  try {
+    const trainer = await prisma.trainer.findUnique({
+      where: {
+        userId: userId,
+      },
+      include: {
+        user: true,
+        registeredClasses: true,
+      },
+    });
+
+    return trainer;
+  } catch (error) {
+    console.error("Error fetching trainer by userId:", error);
+    return null;
+  }
+}
+
+type ClassOfferingWithRelations = {
+  id: number;
+  className: string;
+  description: string;
+  scheduleTime: Date;
+  durationMins: number;
+  capacity: number;
+  trainerId: number;
+  roomId: number;
+  trainer: {
+    id: number;
+    userId: number;
+    isWorking: boolean;
+    hourlyRate: number;
+    certifications: string | null;
+    bio: string | null;
+  };
+  room: {
+    id: number;
+    roomNumber: string;
+    location: string;
+    capacity: number;
+  };
+};
+
+export async function getClassOfferings(
+  trainerId: number | undefined
+): Promise<ClassOfferingWithRelations[] | null> {
+  if (!trainerId) return null;
+
+  try {
+    // Fetch class offerings with the full nested `trainer` and `room` objects
+    const classOfferings = await prisma.classOffering.findMany({
+      where: {
+        trainerId: trainerId,
+      },
+      include: {
+        trainer: true,  // Include full trainer data
+        room: true,     // Include full room data
+      },
+    });
+
+    return classOfferings;
+  } catch (error) {
+    console.error("Error fetching class offerings by trainerId:", error);
+    return null;
+  }
+}
+
+// export async function getclassOfferings(TrainerId: number | undefined): Promise<ClassOffering | null> {
+//   if (!TrainerId) return null;
+ 
+//   try {
+//     const classOfferings = await prisma.classOffering.findMany({
+//       where: {
+//         trainerId: TrainerId,
+//       },
+//       include: {
+//         trainer: true,
+//         room: true,
+//       },
+//     });
+   
+//     return classOfferings;
+//   } catch (error) {
+//     console.error("Error fetching class offerings by TrainerId:", error);
+//     return null;
+//   }
+// }

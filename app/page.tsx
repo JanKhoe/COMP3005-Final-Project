@@ -33,7 +33,7 @@ export default function LoginPage() {
         router.push('/admin_home')
       }
       else if(result.user.typeOfUser === UserType.trainer){
-        
+        router.push('/trainer_home')
       }
       else {
         router.push('/home')
