@@ -129,8 +129,6 @@ export async function updateMemberGoal(
   }
 }
 
-
-
 export async function getMember(userId: number | undefined): Promise<Member | null> {
   if (!userId) return null;
 
@@ -268,7 +266,7 @@ export async function deleteClassOffering(classId: number) {
   }
 }
 
-/// Trainer functions
+/// TRAINER PAGE FUNCTIONS
 
 export async function getTrainer(userId: number | undefined): Promise<Trainer | null> {
   if (!userId) return null;
@@ -291,71 +289,29 @@ export async function getTrainer(userId: number | undefined): Promise<Trainer | 
   }
 }
 
-type ClassOfferingWithRelations = {
-  id: number;
-  className: string;
-  description: string;
-  scheduleTime: Date;
-  durationMins: number;
-  trainerId: number;
-  roomId: number;
-  trainer: {
-    id: number;
-    userId: number;
-    isWorking: boolean;
-    hourlyRate: number;
-    certifications: string | null;
-    bio: string | null;
-  };
-  room: {
-    id: number;
-    roomNumber: string;
-    location: string;
-    capacity: number;
-  };
-};
-
-export async function getClassOfferings(
-  trainerId: number | undefined
-): Promise<ClassOfferingWithRelations[] | null> {
-  if (!trainerId) return null;
-
+export async function searchMember(name: string) { // For the search bar, find member by name
   try {
-    // Fetch class offerings with the full nested `trainer` and `room` objects
-    const classOfferings = await prisma.classOffering.findMany({
+    const member = await prisma.member.findFirst({
       where: {
-        trainerId: trainerId,
+        user: {
+          name: {
+            contains: name,
+            mode: "insensitive",
+          },
+        },
       },
       include: {
-        trainer: true,  // Include full trainer data
-        room: true,     // Include full room data
+        user: true,
+        healthMetrics: {
+          orderBy: { measuredAt: "desc" },
+          take: 1, // <-- ONLY the most recent metric
+        },
       },
     });
 
-    return classOfferings;
-  } catch (error) {
-    console.error("Error fetching class offerings by trainerId:", error);
+    return member;
+  } catch (err) {
+    console.error("Error searching member:", err);
     return null;
   }
 }
-
-// export async function getclassOfferings(TrainerId: number | undefined): Promise<ClassOffering | null> {
-//   if (!TrainerId) return null;
- 
-//   try {
-//     const classOfferings = await prisma.classOffering.findMany({
-//       where: {
-//         trainerId: TrainerId,
-//       },
-//       include: {
-//         trainer: true,
-//         room: true,
-//       },
-//     });
-   
-//     return classOfferings;
-//   } catch (error) {
-//     console.error("Error fetching class offerings by TrainerId:", error);
-//     return null;
-//   }
-// }
