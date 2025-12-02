@@ -2,10 +2,9 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@/app/contexts/UserContext'
 import { prisma } from '@/lib/prisma';
-import { User, Trainer, ClassOffering} from '@/generated/prisma';
-import { getAllUsers, getTrainer, searchMember} from '../actions/auth';
+import { User} from '@/generated/prisma';
+import { searchMember} from '../actions/auth';
 import { TrainerWorkData } from '../api/trainerWorkData/route';
-// import { useRouter } from "next/navigation";
 
 // app/api/trainer/[id]/work/route.ts
 import { NextResponse } from 'next/server';
@@ -14,11 +13,9 @@ export default function TrainerHome(){
     const [refresh, setRefresh] = useState(false);
     const {user, setUser, logout } = useUser();
     const [ users, setUsers ] = useState<User[]>([]);
-    // const [classData, setClassData] = useState<any>(null); // useState<ClassOffering[]>([]);
-    const [trainerData, setTrainerData] = useState<TrainerWorkData[]>([]); // array of twd
-
-    const [searchText, setSearchText] = useState("");//
-    const [searchedMember, setSearchedMember] = useState<any>(null);//
+    const [trainerData, setTrainerData] = useState<TrainerWorkData[]>([]); // array of TWD
+    const [searchText, setSearchText] = useState(""); // For lookup
+    const [searchedMember, setSearchedMember] = useState<any>(null);
 
     // Gets current trainer data + classes so all schedule info can be viewed
     const fetchTrainerData = async (trainerId: number) => {
@@ -39,7 +36,6 @@ export default function TrainerHome(){
     };
 
     useEffect(() => {
-      //fetchClassOfferingsData();
       if(!user?.TrainerId) return;
       fetchTrainerData(user?.TrainerId);
     }, [user?.TrainerId]);
@@ -48,12 +44,7 @@ export default function TrainerHome(){
         setRefresh(!refresh);
     };
 
-    // const router = useRouter();
-
-    // const viewMember = () => {
-    //     router.push("/trainer_home/view_member");
-    // };
-
+    // For search
     const handleSearch = async () => {
       if (!searchText.trim()) return;
 
@@ -70,7 +61,7 @@ export default function TrainerHome(){
                   Hello, Trainer {user?.name}
                 </h1>
               </div>
-            {!trainerData ? (
+            {!(user?.TrainerId) ? (
               <div className='w-full max-w-8xl flex items-center justify-center'>
                 <div className="bg-zinc-900 max-w-6xl border border-zinc-800 rounded-lg p-6">
                   <p className="text-zinc-400">Loading profile...</p>
@@ -93,7 +84,7 @@ export default function TrainerHome(){
                             <th className="py-3 px-4 text-left font-semibold">Schedule</th>
                             <th className="py-3 px-4 text-left font-semibold">Duration (mins)</th>
                             <th className="py-3 px-4 text-left font-semibold">Capacity</th>
-                            <th className="py-3 px-4 text-left font-semibold">Ateendees</th>
+                            <th className="py-3 px-4 text-left font-semibold">Atendees</th>
                             <th className="py-3 px-4 text-left font-semibold">Type</th>
                             <th className="py-3 px-4 text-left font-semibold">Goal Completed</th>
                             <th className="py-3 px-4 text-left font-semibold">Room Capacity</th>

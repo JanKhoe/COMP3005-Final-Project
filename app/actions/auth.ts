@@ -427,9 +427,9 @@ export async function searchMember(name: string) { // For the search bar, find m
       },
       include: {
         user: true,
-        healthMetrics: {
+        healthMetrics: { // most recent metric
           orderBy: { measuredAt: "desc" },
-          take: 1, // <-- ONLY the most recent metric
+          take: 1,
         },
       },
     });
