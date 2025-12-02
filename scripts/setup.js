@@ -29,15 +29,15 @@ async function setupDatabase() {
     await pool.query(`
       INSERT INTO "User" (name, password, "typeOfUser")
       VALUES ('trainer', 'trainer', 'trainer'),
-      VALUES ('trainer2', 'trainer', 'trainer'),
-      VALUES ('trainer2', 'trainer', 'trainer')
-
+             ('trainer2', 'trainer', 'trainer'),
+             ('trainer3', 'trainer', 'trainer')
     `);
     
     await pool.query(`
       INSERT INTO "Trainer" ("userId", "isWorking", "hourlyRate", "certifications", "bio")
-      VALUES (2, true, 60, 'CPT, Strength Training', 'Passionate about helping people get stronger.')
-      VALUES (3, true, 85, 'CPT, Strength Training', 'Passionate about helping people get stronger.')
+      VALUES (2, true, 60, 'CPT, Strength Training', 'Passionate about helping people get stronger.'),
+             (3, true, 85, 'CPT', 'Former athlete turned professional trainer.'),
+             (4, true, 50, NULL, 'Currently on leave.')
     `);
     
     console.log('Sample trainer inserted successfully!');
