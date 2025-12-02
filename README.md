@@ -53,8 +53,4 @@ app > home > page.tsx: this is where the dashboard page for Members is. All of t
 
 app > components > AddMetricBtn.tsx: this is responsible for sending the POST request to add a new Metric for the current Member to their Metric table. It uses states to store the text input values.
 
-app > components > StudentTable.tsx: This is the component that is responsible for fetching All students and displaying it on the page. It has a dependency on a certain variable that when changed will call the fetch again. This is changed whenever i add, delete or update a student, ensuring that the display is always up to date.
-
-app > components > DeleteStudentButton.tsx: This is a component used within the StudentTable component which is assigned to each entry on the table and uses their ID to send a DELETE request to the manager if it is clicked
-
-app > components > UpdateStudentButton.tsx: This is a component used within the StudentTable component which is assigned to each entry ton the table and uses their ID and an additional text input to send an PUT request to the manager if it is clicked which will change the respective's students' email.
+app > actions > auth.ts: This is the component that is responsible for interacting with the database directly on the server. Many different calls to Prisma functions are made here.
