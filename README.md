@@ -5,7 +5,7 @@ Video Tutorial: https://drive.google.com/file/d/1fgRUL5QDqZQiDr786I_oRTuIaKuK6o2
 ## COMP 3005 Final Project - Gym Management Application
 *Group members*
 - Jansen Khoe - 101260040
-- Jessica Hill -
+- Jessica Hill - 101280293
 - Stanny Huang - 101272645
 
 A simple Web aplication that supports the creation, reading, updating and deleting of a student object that is stored in your local postgres database manager.
