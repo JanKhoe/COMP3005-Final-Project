@@ -8,7 +8,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 A simple Web aplication that supports the creation, reading, updating and deleting of a student object that is stored in your local postgres database manager.
 
-## Link to Video: 
+## Link to Video: https://drive.google.com/file/d/1FgnWJp6D4xY3XzFmkq_or6m3oTiKtDFH/view?usp=sharing
 
 ## Link to Report: https://docs.google.com/document/d/1hFVWoGy1yohTQHBHiWrwalv4PlaoyM9SSngRE4BalSU/edit?usp=sharing
 
