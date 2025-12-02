@@ -37,9 +37,9 @@ A simple Web aplication that supports the creation, reading, updating and deleti
 
 1. Using the same terminal you can run `npm run dev` which will launch the application at http://localhost:3000/
 2. From here you should be greeted by the Login and Registration screen. You can populate a member account by registering, and upon login you will be greeted by a dashboard, where you can access the various features of our application.
-3. If you loaded in the default information using `npm run setup`, you can login as an Admin: <br>
+3. If you loaded in the default information using `npm run setup`, you can **login as an Admin:** <br>
    Username: admin Password: adminpass
-   Login as a Trainer: <br>
+   <br> **Login as a Trainer:** <br>
    Username: trainer Password trainer
 
 # TA Information
