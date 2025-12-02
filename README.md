@@ -1,6 +1,6 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## COMP 3005 Final Project - Gym Management Application
+# COMP 3005 Final Project - Gym Management Application
 *Group members*
 - Jansen Khoe - 101260040
 - Jessica Hill - 101280293
@@ -12,16 +12,16 @@ A simple Web aplication that supports the creation, reading, updating and deleti
 
 ## Link to Report: https://docs.google.com/document/d/1hFVWoGy1yohTQHBHiWrwalv4PlaoyM9SSngRE4BalSU/edit?usp=sharing
 
-## How to setup
+# Setup Tutorial
 
-# Preliminary
+## Preliminary
 
 1. Make sure you have node installed on your local machine.
 2. Download this repo as a zip file.
 3. Open up a cmd terminal with COMP3005-Final-Project as the working directory and run 'npm install' <br>
    **NOTE: DO NOT UPDATE VULNERABILITIES! This will break the database setup.**
 
-# Database Connection / Database Setup
+## Database Connection / Database Setup
 
 1. Open up pgAdmin
 2. Create a new database
@@ -33,12 +33,16 @@ A simple Web aplication that supports the creation, reading, updating and deleti
 7. Since the requirements did not include creating trainers, admins, and rooms; you can load default starting information within the database using `npm run setup`
    
 
-# Running the application
+## Running the application
 
 1. Using the same terminal you can run `npm run dev` which will launch the application at http://localhost:3000/
 2. From here you should be greeted by the Login and Registration screen. You can populate a member account by registering, and upon login you will be greeted by a dashboard, where you can access the various features of our application.
+3. If you loaded in the default information using `npm run setup`, you can login as an Admin: <br>
+   Username: admin Password: adminpass
+   Login as a Trainer: <br>
+   Username: trainer Password trainer
 
-## TA Information
+# TA Information
 
 This application was made using next.js which leverages the React framework to streamline the development process but can look a bit confusing if you are unfamiliar with the tech stack. So here are some generic places to check for code quality.
 
