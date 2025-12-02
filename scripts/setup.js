@@ -28,7 +28,8 @@ async function setupDatabase() {
     
     await pool.query(`
       INSERT INTO "User" (name, password, "typeOfUser")
-      VALUES ('trainer', 'trainer', 'trainer')
+      VALUES ('trainer', 'trainer', 'trainer'),
+      VALUES ('trainer2', 'trainer', 'trainer'),
       VALUES ('trainer2', 'trainer', 'trainer')
 
     `);
