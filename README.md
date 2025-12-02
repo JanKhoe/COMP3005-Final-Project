@@ -1,7 +1,5 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Video Tutorial: https://drive.google.com/file/d/1fgRUL5QDqZQiDr786I_oRTuIaKuK6o23/view?usp=sharing
-
 ## COMP 3005 Final Project - Gym Management Application
 *Group members*
 - Jansen Khoe - 101260040
@@ -9,6 +7,10 @@ Video Tutorial: https://drive.google.com/file/d/1fgRUL5QDqZQiDr786I_oRTuIaKuK6o2
 - Stanny Huang - 101272645
 
 A simple Web aplication that supports the creation, reading, updating and deleting of a student object that is stored in your local postgres database manager.
+
+# Link to Video: 
+
+# Link to Report: https://docs.google.com/document/d/1hFVWoGy1yohTQHBHiWrwalv4PlaoyM9SSngRE4BalSU/edit?usp=sharing
 
 ## How to setup
 
