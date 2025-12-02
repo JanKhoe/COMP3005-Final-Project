@@ -28,7 +28,7 @@ A simple Web aplication that supports the creation, reading, updating and deleti
 4. Run `npx prisma generate` to generate the prisma client and allow for database setup
 5. Go back to the terminal you used in `Preliminary` run `npx prisma migrate dev --name added init` which will create all the tables.
 6. To set up the view and the trigger run `node scripts/create-view` and `node scripts/create-trigger` 
-7. Since the requirements did not include creating trainers, admins, and rooms you can load default information useing `npm run setup`
+7. Since the requirements did not include creating trainers, admins, and rooms; you can load default starting information within the database using `npm run setup`
    
 
 # Running the application
@@ -43,9 +43,9 @@ This application was made using next.js which leverages the React framework to s
 lib > db.ts: this facilitates my connection to the database and allows me to send queries to the database manager. 
 app > components: stores all reuseable code snippets that i need for this assignment.
 
-app > page.tsx: this is where the landing page is. Everything is rendered here.
+app > home > page.tsx: this is where the dashboard page for Members is. All of the metrics and graphs are rendered here.
 
-app > components > AddStudentButton.tsx: this is responsible for sending the POST request to add students to the table. It uses states to store the text input values.
+app > components > AddMetricBtn.tsx: this is responsible for sending the POST request to add a new Metric for the current Member to their Metric table. It uses states to store the text input values.
 
 app > components > StudentTable.tsx: This is the component that is responsible for fetching All students and displaying it on the page. It has a dependency on a certain variable that when changed will call the fetch again. This is changed whenever i add, delete or update a student, ensuring that the display is always up to date.
 
