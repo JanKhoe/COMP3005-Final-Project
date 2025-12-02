@@ -235,22 +235,29 @@ export async function getAllRooms(): Promise<Room[]> {
 export async function checkScheduleConflict(
   scheduleTime: Date,
   durationMins: number,
-  roomId: number
+  id: number,
+  type: "room" | "trainer"
 ): Promise<boolean> {
   try {
     // Calculate end time of the new class
     const newStart = scheduleTime;
     const newEnd = new Date(scheduleTime.getTime() + durationMins * 60000);
+    let whereClause = {};
 
-    // Fetch all classes in this room
-    const existingClasses = await prisma.classOffering.findMany({
-      where: { roomId }
-    });
+    // Determine the query condition based on type
+    if (type==="room") {
+      whereClause = { roomId: id };
+    } else if (type === "trainer") {
+      whereClause = { trainerId: id };
+    }
 
-    // Check if any existing class overlaps with the new class
-    const hasConflict = existingClasses.some(classes => {
-      const classStart = classes.scheduleTime;
-      const classEnd = new Date(classes.scheduleTime.getTime() + classes.durationMins * 60000);
+    // Fetch all relevant classes
+    const existingClasses = await prisma.classOffering.findMany({ where: whereClause });
+
+    // Check for overlapping classes
+    const hasConflict = existingClasses.some((c) => {
+      const classStart = c.scheduleTime;
+      const classEnd = new Date(c.scheduleTime.getTime() + c.durationMins * 60000);
       return newStart < classEnd && classStart < newEnd;
     });
 
@@ -277,6 +284,31 @@ export async function addClassOffering(
 
 ) {
   try {
+    // Fetch room
+    const room = await prisma.room.findUnique({
+      where: { id: roomId }
+    });
+
+    // Fetch trainer
+    const trainer = await prisma.trainer.findUnique({
+      where: { id: trainerId }
+    });
+
+    /// CHECK 1: Room capacity constraints
+    if (room && room.capacity < (gcCapacity || 10)) {
+      return { success: false, error: "Room capacity is less than the group class capacity." };
+    }
+    /// CHECK 2: Schedule conflicts
+    const hasConflict = await checkScheduleConflict(scheduleTime, durationMins, roomId, "room");
+    if (hasConflict) {
+      return { success: false, error: "Room schedule conflict detected for room ID " + roomId + " and time " + scheduleTime.toString() };
+    }
+    /// CHECK 3: Trainer availability
+    const trainerConflict = await checkScheduleConflict(scheduleTime, durationMins, trainerId, "trainer");
+    if (trainerConflict) {
+      return { success: false, error: "Trainer schedule conflict detected for trainer ID " + trainerId + " and time " + scheduleTime.toString() };
+    }
+
     const classOffering = await prisma.classOffering.create({
       data: {
         className,
@@ -289,20 +321,7 @@ export async function addClassOffering(
       }
     });
 
-    const room = await prisma.room.findUnique({
-      where: { id: roomId }
-    });
-
-    // Check capacity constraints
-    if (room && room.capacity < (gcCapacity || 10)) {
-      return { success: false, error: "Room capacity is less than the group class capacity." };
-    }
-    // Check schedule conflicts
-    const hasConflict = await checkScheduleConflict(scheduleTime, durationMins, roomId);
-    if (hasConflict) {
-      return { success: false, error: "Schedule conflict detected for room ID " + roomId + " and time " + scheduleTime.toString() };
-    }
-
+    
     if (classType === ClassType.group) {
       await prisma.groupClassOffering.create({
         data: {

@@ -14,7 +14,7 @@ export default function AddClassButton() {
 
   // Conditional fields based on class type
   const [gcCapacity, setGcCapacity] = useState(10);
-  const [ptMemberId, setPtMemberId] = useState<number | undefined>(undefined);
+  const [ptMemberId, setPtMemberId] = useState<number>(0);
   const [ptGoal, setPtGoal] = useState<string>('');
 
   // Required foreign keys

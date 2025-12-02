@@ -85,6 +85,7 @@ model Trainer{
   bio               String?
   
   registeredClasses ClassOffering[]
+  payments          Payment[]
 }
 
 // Admin model representing system administrators
@@ -169,4 +170,19 @@ model Room{
 
   // Link to ClassOfferings held in this room
   classOfferings ClassOffering[]
+}
+
+// Payments model to track payments made to trainers
+model Payment {
+  id            Int       @id @default(autoincrement())
+  amount        Float
+
+  // dateOpened when payment record is created, paymentDate when payment is made
+  dateOpened    DateTime  @default(now())
+  paymentDate   DateTime?
+
+  trainerId     Int
+  trainer       Trainer   @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+
+  @@index([trainerId])
 }

@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { useUser } from '@/app/contexts/UserContext'
 import { User, Room } from '@/generated/prisma';
 import { useEffect } from 'react';
-import type { ClassOffering } from '@/generated/prisma';
-import AddClassButton from '../components/AddClassBtn';
 import { getAllUsers, getAllClasses, getAllRooms, deleteClassOffering } from '../actions/auth';
 import { Prisma } from '@/generated/prisma';
+import AddClassButton from '../components/AddClassBtn';
+import GeneratePaymentsButton from '../components/GeneratePayments';
 
 export default function AdminHome() {
   
@@ -74,15 +74,6 @@ export default function AdminHome() {
     // Otherwise return N/A
     return 'N/A';
   }
-
-  // Helper function
-  /*
-  const getClassType = (c: ClassOffering) => {
-    if (c.groupClass) return "Group Class";
-    if (c.ptSession) return "Personal Training";
-    return "Unknown";
-  };
-  */
 
   return (
   // Start of main container
@@ -164,8 +155,8 @@ export default function AdminHome() {
 
       </div>
 
-      {/* CLASSOFFERING TABLES */}
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6 mb-2">
+      {/* CLASSOFFERING TABLE */}
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6 mb-10">
           <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">
             Registered Classes
           </h2>
@@ -235,14 +226,12 @@ export default function AdminHome() {
           </table>
         </div>
 
+      {/* GRID FOR MULTIPLE TABLES */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
         {/* CREATE CLASS FORM */}
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg shadow-sm p-6">
-          <div className="mt-6">
-            <AddClassButton/>
-          </div>
-        </div>
-        
-
+        <AddClassButton/>
+        <GeneratePaymentsButton/>
+      </div>
     </main>
   </div>
   );

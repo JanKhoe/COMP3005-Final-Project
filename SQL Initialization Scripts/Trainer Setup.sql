@@ -1,10 +1,7 @@
-
+/*
 INSERT INTO "User" (name, password, "typeOfUser")
 VALUES ('admin', 'adminpass', 'system_admin');
-
-INSERT INTO "Admin" ("userId", "accessLevel")
-VALUES (1, 'superuser');
-
+*/
 
 -- Insert trainer users into the User table
 
@@ -14,12 +11,17 @@ VALUES
   ('Bob Smith', 'securepass', 'trainer'),
   ('Carla Lopez', 'trainme', 'trainer');
 
+
+
+DELETE FROM "Trainer"
+WHERE id = 10;
+
 -- Insert into Trainer using the IDs of the new Users
 INSERT INTO "Trainer" ("userId", "isWorking", "hourlyRate", "certifications", "bio")
 VALUES
-  (2, true, 60, 'CPT, Strength Training', 'Passionate about helping people get stronger.'),
-   (3, true, 50, 'CPT', 'Former athlete turned professional trainer.'),
-   (4, false, 55, NULL, 'Currently on leave.');
+  (1, true, 60, 'CPT, Strength Training', 'Passionate about helping people get stronger.'),
+   (2, true, 50, 'CPT', 'Former athlete turned professional trainer.'),
+   (3, false, 55, NULL, 'Currently on leave.');
    
 
 INSERT INTO "Room" ("roomNumber", "capacity", "location") VALUES
